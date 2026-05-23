@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,14 +19,16 @@
                         outfit: ['"Outfit"', 'sans-serif'],
                     },
                     colors: {
-                        segoNavy: '#0D0E12', /* Pure Dark Black for Sego Style */
+                        segoNavy: '#0D0E12',
                         segoNavyLight: '#15171E',
-                        segoOrange: '#8DC63F', /* Swapped to brandGreen */
-                        segoOrangeHover: '#7CB532', /* Darker brandGreen */
                         segoGray: '#7E8B9B',
-                        segoBg: '#F8F9FB',
+                        segoBg: '#D6E6F2', /* Clinical hardware light-blue */
                         brandGreen: '#8DC63F',
                         brandGreenHover: '#7CB532',
+                        redBtn: '#E63946',
+                        redBtnHover: '#D62828',
+                        blueBtn: '#1E6091',
+                        blueBtnHover: '#184E77'
                     }
                 }
             }
@@ -34,129 +36,232 @@
     </script>
     <style>
         .custom-scrollbar::-webkit-scrollbar {
-            width: 4px;
+            width: 6px;
+            height: 6px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
-            background: transparent;
+            background: #EBF3FA;
+            border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.1);
+            background: #BDCEDA;
             border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #A3B8CC;
+        }
+        
+        /* GUI Industrial Console Style Tokens */
+        .desktop-window {
+            border: 4px solid #334155;
+            box-shadow: 
+                0 25px 50px -12px rgba(0, 0, 0, 0.4), 
+                0 0 40px rgba(59, 130, 246, 0.1),
+                inset 0 2px 4px rgba(255, 255, 255, 0.2);
+            background-color: #D6E6F2;
+        }
+        
+        .gui-sidebar-panel {
+            background-color: #E6EEF4;
+            border-right: 2px solid #BDCEDA;
+        }
+        
+        .gui-tactile-btn {
+            background: linear-gradient(180deg, #4A90E2 0%, #2172CD 100%);
+            border: 2px solid #FFFFFF;
+            color: #FFFFFF;
+            font-weight: 800;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+            box-shadow: 0 3px 6px rgba(33, 114, 205, 0.25);
+            transition: all 0.2s ease-in-out;
+        }
+        
+        .gui-tactile-btn:hover {
+            background: linear-gradient(180deg, #5C9FE6 0%, #3182DE 100%);
+            box-shadow: 0 4px 8px rgba(33, 114, 205, 0.35);
+            transform: translateY(-1px);
+        }
+        
+        .gui-tactile-btn:active {
+            background: linear-gradient(180deg, #1C65B7 0%, #15559E 100%);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            transform: translateY(1px);
+        }
+
+        .gui-tactile-btn-active {
+            background: linear-gradient(180deg, #10B981 0%, #047857 100%) !important;
+            box-shadow: 0 4px 8px rgba(4, 120, 87, 0.3) !important;
+            border-color: #FFFFFF !important;
+        }
+
+        .gui-tactile-btn-active:hover {
+            background: linear-gradient(180deg, #34D399 0%, #059669 100%) !important;
+        }
+        
+        .gui-btn-red {
+            background: linear-gradient(180deg, #EF4444 0%, #B91C1C 100%);
+            box-shadow: 0 3px 6px rgba(185, 28, 28, 0.25);
+        }
+        .gui-btn-red:hover {
+            background: linear-gradient(180deg, #F87171 0%, #DC2626 100%);
         }
     </style>
 </head>
-<body class="font-sans text-[#2C3A4B] antialiased bg-segoBg flex h-screen overflow-hidden">
+<body class="bg-gradient-to-br from-slate-900 via-slate-950 to-indigo-950 flex items-center justify-center p-4 sm:p-6 h-screen overflow-hidden font-sans">
 
-    <!-- Sidebar (Gaya Hitam-Hijau FoodDetect) -->
-    <aside class="w-[260px] bg-segoNavy text-white flex flex-col h-full flex-shrink-0 border-r border-white/5 relative">
-        <!-- Logo Brand -->
-        <a href="{{ route('admin.dashboard') }}" class="h-20 flex items-center px-6 gap-3 mb-4 hover:opacity-90 transition duration-200 group/logo">
-            <div class="w-10 h-10 rounded-full bg-brandGreen flex items-center justify-center font-bold text-white text-base font-outfit shadow-md shadow-brandGreen/25 group-hover/logo:scale-105 transition duration-300">
-                Fd
-            </div>
-            <div>
-                <h1 class="text-xl font-bold tracking-tight font-outfit leading-tight text-white group-hover/logo:text-brandGreen transition duration-300">FoodDetect</h1>
-                <p class="text-[9px] font-bold text-brandGreen uppercase tracking-widest mt-0.5">Admin Monitoring</p>
-            </div>
-        </a>
+    <!-- MAIN DESKTOP APPLICATION WINDOW CONTAINER -->
+    <div class="desktop-window w-full max-w-[1600px] h-[92vh] rounded-3xl overflow-hidden flex flex-col relative">
         
-        <!-- Navigation Menu -->
-        <nav class="flex-1 px-4 space-y-1.5 overflow-y-auto custom-scrollbar">
-            <p class="px-3 text-[10px] font-extrabold text-segoGray/60 uppercase tracking-widest mb-3">Main Menu</p>
-            
-            <a href="{{ route('admin.dashboard') }}" class="group flex items-center px-4 py-3 rounded-2xl transition-all duration-300 {{ request()->routeIs('admin.dashboard') ? 'bg-brandGreen text-white font-bold shadow-lg shadow-brandGreen/20' : 'text-white/60 hover:bg-white/5 hover:text-white' }} shadow-sm">
-                <i class="fa-solid fa-chart-pie w-6 text-base transition group-hover:scale-110 {{ request()->routeIs('admin.dashboard') ? 'text-white' : 'text-white/40 group-hover:text-white' }}"></i>
-                <span class="text-sm font-semibold">Dashboard</span>
-            </a>
-            
-            <a href="{{ route('admin.sensors.index') }}" class="group flex items-center px-4 py-3 rounded-2xl transition-all duration-300 {{ request()->routeIs('admin.sensors.*') ? 'bg-brandGreen text-white font-bold shadow-lg shadow-brandGreen/20' : 'text-white/60 hover:bg-white/5 hover:text-white' }}">
-                <i class="fa-solid fa-tower-broadcast w-6 text-base transition group-hover:scale-110 {{ request()->routeIs('admin.sensors.*') ? 'text-white' : 'text-white/40 group-hover:text-white' }}"></i>
-                <span class="text-sm font-semibold">Data Sensor IoT</span>
-            </a>
-            
-            <a href="{{ route('admin.contamination.index') }}" class="group flex items-center px-4 py-3 rounded-2xl transition-all duration-300 {{ request()->routeIs('admin.contamination.*') ? 'bg-brandGreen text-white font-bold shadow-lg shadow-brandGreen/20' : 'text-white/60 hover:bg-white/5 hover:text-white' }}">
-                <i class="fa-solid fa-triangle-exclamation w-6 text-base transition group-hover:scale-110 {{ request()->routeIs('admin.contamination.*') ? 'text-white' : 'text-white/40 group-hover:text-white' }}"></i>
-                <span class="text-sm font-semibold">Log Kontaminasi</span>
-            </a>
-            
-            <a href="{{ route('admin.categories.index') }}" class="group flex items-center px-4 py-3 rounded-2xl transition-all duration-300 {{ request()->routeIs('admin.categories.*') ? 'bg-brandGreen text-white font-bold shadow-lg shadow-brandGreen/20' : 'text-white/60 hover:bg-white/5 hover:text-white' }}">
-                <i class="fa-solid fa-boxes-stacked w-6 text-base transition group-hover:scale-110 {{ request()->routeIs('admin.categories.*') ? 'text-white' : 'text-white/40 group-hover:text-white' }}"></i>
-                <span class="text-sm font-semibold">Kategori Pangan</span>
-            </a>
-
-            <p class="px-3 text-[10px] font-extrabold text-segoGray/60 uppercase tracking-widest mb-3 pt-6">Pengetesan</p>
-            
-            <a href="{{ route('admin.testing.index') }}" class="group flex items-center px-4 py-3 rounded-2xl transition-all duration-300 {{ request()->routeIs('admin.testing.*') ? 'bg-brandGreen text-white font-bold shadow-lg shadow-brandGreen/20' : 'text-white/60 hover:bg-white/5 hover:text-white' }}">
-                <i class="fa-solid fa-flask-vial w-6 text-base transition group-hover:scale-110 {{ request()->routeIs('admin.testing.*') ? 'text-white' : 'text-white/40 group-hover:text-white' }}"></i>
-                <span class="text-sm font-semibold">Tes Sensor USB</span>
-            </a>
-
-            <p class="px-3 text-[10px] font-extrabold text-segoGray/60 uppercase tracking-widest mb-3 pt-6">Manajemen</p>
-            
-            <a href="{{ route('admin.profile.edit') }}" class="group flex items-center px-4 py-3 rounded-2xl transition-all duration-300 {{ request()->routeIs('admin.profile.edit') ? 'bg-brandGreen text-white font-bold shadow-lg shadow-brandGreen/20' : 'text-white/60 hover:bg-white/5 hover:text-white' }}">
-                <i class="fa-solid fa-user-gear w-6 text-base transition group-hover:scale-110 {{ request()->routeIs('admin.profile.edit') ? 'text-white' : 'text-white/40 group-hover:text-white' }}"></i>
-                <span class="text-sm font-semibold">Edit Profil</span>
-            </a>
-        </nav>
-        
-        <!-- Kartu Promo Hijau di Sidebar Bawah -->
-        <div class="p-4 mx-4 mb-6 rounded-2xl bg-brandGreen/10 border border-brandGreen/20 flex flex-col items-center text-center relative overflow-hidden">
-            <div class="w-10 h-10 rounded-full bg-brandGreen flex items-center justify-center text-white mb-2 shadow-sm shadow-brandGreen/20">
-                <i class="fa-solid fa-circle-nodes"></i>
-            </div>
-            <p class="text-[10px] font-extrabold tracking-wider text-white uppercase">Tes Kualitas Pangan</p>
-            <p class="text-[9px] text-white/55 mt-1 leading-relaxed max-w-[150px]">Lakukan analisa mandiri sampel di Laboratorium.</p>
-            <a href="{{ route('admin.testing.index') }}" class="mt-3.5 w-full bg-white text-brandGreen hover:bg-white/95 text-[11px] font-extrabold py-2 px-4 rounded-xl transition duration-300 flex items-center justify-center gap-1.5 shadow-sm">
-                <i class="fa-solid fa-flask"></i> Mulai Tes
-            </a>
-        </div>
-
-        <!-- Logout -->
-        <div class="p-4 border-t border-white/5 bg-black/15">
-            <form action="{{ route('logout') }}" method="POST" class="w-full">
-                @csrf
-                <button type="submit" class="group flex w-full items-center px-4 py-2.5 text-white/60 hover:text-red-400 hover:bg-red-500/5 rounded-xl transition duration-300 text-sm font-semibold">
-                    <i class="fa-solid fa-arrow-right-from-bracket w-6 text-base text-white/40 group-hover:text-red-400 group-hover:translate-x-1 transition duration-300"></i>
-                    <span>Keluar</span>
-                </button>
-            </form>
-        </div>
-    </aside>
-
-    <!-- Main Content -->
-    <main class="flex-1 flex flex-col h-full overflow-hidden relative">
-        
-        <!-- Header (Gaya Hitam-Hijau) -->
-        <header class="h-20 bg-white border-b border-gray-150/70 flex items-center justify-between px-8 z-10">
-            <div>
-                <h2 class="text-xl font-bold font-outfit text-gray-900 tracking-tight">@yield('breadcrumb', 'Analytics')</h2>
-            </div>
-            
-            <div class="flex items-center gap-6">
-                <!-- Search bar placeholder untuk estetika Sego -->
-                <div class="hidden md:flex items-center bg-[#F3F4F6] px-4 py-2.5 rounded-2xl w-[260px] border border-gray-100">
-                    <input type="text" placeholder="Cari di sini..." class="bg-transparent text-xs text-gray-700 outline-none w-full placeholder-gray-400">
-                    <i class="fa-solid fa-magnifying-glass text-gray-400 text-xs"></i>
+        <!-- ==================== WINDOW TITLEBAR (Header) ==================== -->
+        <header class="h-12 bg-[#E1ECF5] border-b border-[#BDCEDA] flex items-center justify-between px-6 z-20 flex-shrink-0">
+            <!-- Left: App Icon & Title -->
+            <div class="flex items-center gap-3 select-none">
+                <div class="w-7 h-7 rounded-full bg-brandGreen flex items-center justify-center font-bold text-white text-xs font-outfit shadow-sm">
+                    Fd
                 </div>
-                
-                <!-- Profile Sego -->
-                <a href="{{ route('admin.profile.edit') }}" class="flex items-center space-x-3 pl-5 border-l border-gray-200 group">
-                    <div class="w-9 h-9 rounded-full bg-gradient-to-br from-brandGreen to-[#7CB532] text-white flex items-center justify-center font-black text-xs shadow-md shadow-brandGreen/25 group-hover:rotate-6 transition duration-300">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-black text-blue-950 tracking-wider uppercase font-outfit">FoodDetect IoT</span>
+                    <span class="text-[9px] font-black bg-blue-200/60 text-blue-800 px-1.5 py-0.5 rounded border border-blue-300/30 uppercase tracking-widest">Quality Control Terminal</span>
+                </div>
+            </div>
+            
+            <!-- Center: App Diagnostic Status -->
+            <div class="hidden md:flex items-center bg-[#F3F4F6] px-4 py-1.5 rounded-xl border border-gray-200 shadow-inner gap-2">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                <span class="text-[9px] font-black text-gray-650 uppercase tracking-wider">Interface Online: USB COM3 ready</span>
+            </div>
+            
+            <!-- Right: Profile & Windows Action Buttons -->
+            <div class="flex items-center gap-4">
+                <!-- User Profile -->
+                <a href="{{ route('admin.profile.edit') }}" class="flex items-center gap-2 border-r border-[#BDCEDA] pr-4 group">
+                    <div class="w-6 h-6 rounded-full bg-gradient-to-br from-brandGreen to-[#7CB532] text-white flex items-center justify-center font-black text-[10px] shadow-sm group-hover:rotate-6 transition duration-300">
                         {{ strtoupper(substr(Auth::user()->name ?? 'AL', 0, 2)) }}
                     </div>
-                    <div class="text-left hidden sm:block">
-                        <p class="text-xs font-bold text-gray-900 leading-tight group-hover:text-brandGreen transition duration-300">{{ Auth::user()->name ?? 'Admin Lab' }}</p>
-                        <p class="text-[9px] font-bold text-segoGray mt-0.5 tracking-wider uppercase">{{ Auth::user()->email ?? 'Quality Control' }}</p>
-                    </div>
-                    <i class="fa-solid fa-chevron-down text-[10px] text-segoGray group-hover:translate-y-0.5 transition duration-300"></i>
+                    <span class="text-[10px] font-extrabold text-blue-950 group-hover:text-blue-600 transition">{{ Auth::user()->name ?? 'Admin Lab' }}</span>
                 </a>
+                
+                <!-- Windows Min/Max/Close Mock Buttons -->
+                <div class="flex items-center gap-1.5 select-none">
+                    <div onclick="alert('Aplikasi berjalan dalam mode full-window.')" class="w-3 h-3 rounded-full bg-yellow-500 hover:bg-yellow-600 cursor-pointer shadow-sm transition" title="Minimize"></div>
+                    <div onclick="alert('Aplikasi sudah dimaksimalkan.')" class="w-3 h-3 rounded-full bg-green-500 hover:bg-green-600 cursor-pointer shadow-sm transition" title="Maximize"></div>
+                    <form action="{{ route('logout') }}" method="POST" id="close-app-form" class="inline">
+                        @csrf
+                        <div onclick="if(confirm('Keluar dari portal dan tutup sesi QC?')) document.getElementById('close-app-form').submit();" class="w-3 h-3 rounded-full bg-red-500 hover:bg-red-650 cursor-pointer shadow-sm transition" title="Keluar & Tutup Aplikasi"></div>
+                    </form>
+                </div>
             </div>
         </header>
 
-        <!-- Main Inner Area (Murni Light Mode) -->
-        <div class="flex-1 overflow-y-auto p-8 bg-segoBg">
-            @yield('content')
+        <!-- ==================== APPLICATION BODY ==================== -->
+        <div class="flex flex-1 overflow-hidden">
+            
+            <!-- LEFT CONTROLS SIDEBAR -->
+            <aside class="gui-sidebar-panel w-[230px] flex flex-col p-4 flex-shrink-0 select-none justify-between">
+                
+                <!-- Navigation & Controls -->
+                <div class="flex flex-col gap-4">
+                    <!-- Section: NAVIGATION -->
+                    <div class="flex flex-col gap-2">
+                        <a href="{{ route('admin.dashboard') }}" class="w-full py-2.5 px-4 rounded-xl text-xs font-black text-center text-white gui-tactile-btn flex items-center justify-start gap-2.5 {{ request()->routeIs('admin.dashboard') ? 'gui-tactile-btn-active' : '' }}">
+                            <i class="fa-solid fa-desktop w-4 text-center"></i> Home Dashboard
+                        </a>
+                        <a href="{{ route('admin.categories.index') }}" class="w-full py-2.5 px-4 rounded-xl text-xs font-black text-center text-white gui-tactile-btn flex items-center justify-start gap-2.5 {{ request()->routeIs('admin.categories.*') ? 'gui-tactile-btn-active' : '' }}">
+                            <i class="fa-solid fa-circle-info w-4 text-center"></i> Information Mode
+                        </a>
+                        <a href="{{ route('admin.sensors.index') }}" class="w-full py-2.5 px-4 rounded-xl text-xs font-black text-center text-white gui-tactile-btn flex items-center justify-start gap-2.5 {{ request()->routeIs('admin.sensors.*') ? 'gui-tactile-btn-active' : '' }}">
+                            <i class="fa-solid fa-wand-magic-sparkles w-4 text-center"></i> Mode Switcher
+                        </a>
+                    </div>
+                    
+                    <!-- Section: CONTROL PANEL -->
+                    <div class="flex flex-col gap-3 border-t-2 border-blue-200/50 pt-3">
+                        <h3 class="text-[10px] font-extrabold text-blue-900 tracking-wider uppercase">CONTROL PANEL</h3>
+                        
+                        <!-- Run Server toggle -->
+                        <button id="layout-btn-run-server" onclick="toggleLayoutServer()" class="w-full py-3 px-4 rounded-xl text-[10px] font-black text-center text-white gui-tactile-btn flex items-center justify-center gap-2">
+                            <span id="layout-led-server" class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse border border-white"></span>
+                            <span id="layout-text-server">RUNNING SERVER</span>
+                        </button>
+                        
+                        <!-- Start Test -->
+                        <a href="{{ route('admin.testing.index') }}" class="w-full py-3 px-4 rounded-xl text-[10px] font-black text-center text-white gui-tactile-btn flex items-center justify-center gap-2 {{ request()->routeIs('admin.testing.*') ? 'gui-tactile-btn-active' : '' }}">
+                            <i class="fa-solid fa-flask"></i> START TEST SCAN
+                        </a>
+                        
+                        <!-- Alerts Log -->
+                        <a href="{{ route('admin.contamination.index') }}" class="w-full py-3 px-4 rounded-xl text-[10px] font-black text-center text-white gui-tactile-btn flex items-center justify-center gap-2 {{ request()->routeIs('admin.contamination.*') ? 'gui-tactile-btn-active' : '' }}">
+                            <i class="fa-solid fa-triangle-exclamation"></i> LOG CONTAMINATIONS
+                        </a>
+                        
+                        <!-- Profile Edit -->
+                        <a href="{{ route('admin.profile.edit') }}" class="w-full py-3 px-4 rounded-xl text-[10px] font-black text-center text-white gui-tactile-btn flex items-center justify-center gap-2 {{ request()->routeIs('admin.profile.edit') ? 'gui-tactile-btn-active' : '' }}">
+                            <i class="fa-solid fa-user-gear"></i> EDIT PROFILE
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Bottom controls -->
+                <div class="flex flex-col gap-3 border-t-2 border-blue-200/50 pt-3 mt-4">
+                    <!-- Delay Selector -->
+                    <div class="flex flex-col gap-1">
+                        <label class="text-[9px] font-extrabold text-blue-900 uppercase">Polling Delay</label>
+                        <select onchange="alert('Jeda pemantauan disesuaikan: ' + this.value + ' detik.')" class="w-full py-1.5 px-3 text-[10px] font-bold text-gray-800 bg-white border-2 border-blue-200 rounded-lg shadow-sm outline-none">
+                            <option value="1.0">1.0 second</option>
+                            <option value="2.0" selected>2.0 seconds</option>
+                            <option value="5.0">5.0 seconds</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Exit button -->
+                    <form action="{{ route('logout') }}" method="POST" class="w-full">
+                        @csrf
+                        <button type="submit" class="w-full py-3 px-4 rounded-xl text-xs font-black text-center text-white gui-tactile-btn gui-btn-red flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-right-from-bracket"></i> EXIT PORTAL
+                        </button>
+                    </form>
+                </div>
+            </aside>
+            
+            <!-- RIGHT CONTENT AREA -->
+            <main class="flex-1 overflow-y-auto p-6 md:p-8 bg-segoBg custom-scrollbar relative">
+                @yield('content')
+            </main>
+            
         </div>
-    </main>
+        
+    </div>
+
+    <!-- Layout Simulation Interaction Script -->
+    <script>
+        let isLayoutServerRunning = true;
+        function toggleLayoutServer() {
+            isLayoutServerRunning = !isLayoutServerRunning;
+            const led = document.getElementById('layout-led-server');
+            const text = document.getElementById('layout-text-server');
+            const btn = document.getElementById('layout-btn-run-server');
+
+            // If we are on dashboard, trigger dashboard's server toggle as well
+            if (typeof toggleServer === 'function') {
+                toggleServer();
+                return;
+            }
+
+            if (isLayoutServerRunning) {
+                led.className = "w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse border border-white";
+                text.textContent = "RUNNING SERVER";
+                btn.classList.remove('gui-btn-red');
+                alert('Server IoT berhasil diaktifkan!');
+            } else {
+                led.className = "w-2.5 h-2.5 rounded-full bg-red-500 border border-white";
+                text.textContent = "SERVER STOPPED";
+                btn.classList.add('gui-btn-red');
+                alert('Server IoT dihentikan.');
+            }
+        }
+    </script>
 </body>
 </html>

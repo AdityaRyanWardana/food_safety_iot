@@ -22,7 +22,8 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware('auth')->group(function () {
     Route::get('/admin/dashboard', function () {
-        $activeSensors = \App\Models\SensorDevice::where('status', 'active')->count();
+        $sensorDevices = \App\Models\SensorDevice::all();
+        $activeSensors = $sensorDevices->where('status', 'active')->count();
         $warningsToday = \App\Models\ContaminationLog::whereDate('detected_at', \Carbon\Carbon::today())
             ->where('status', '!=', 'teratasi')
             ->count();
@@ -37,7 +38,7 @@ Route::middleware('auth')->group(function () {
             ->take(10)
             ->get();
 
-        return view('admin.dashboard', compact('activeSensors', 'warningsToday', 'avgTemp', 'avgHum', 'recentReadings', 'categories'));
+        return view('admin.dashboard', compact('sensorDevices', 'activeSensors', 'warningsToday', 'avgTemp', 'avgHum', 'recentReadings', 'categories'));
     })->name('admin.dashboard');
 
     Route::get('/admin/profile', [ProfileController::class, 'edit'])->name('admin.profile.edit');

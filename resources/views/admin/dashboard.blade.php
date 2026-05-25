@@ -221,7 +221,7 @@
                 <div class="flex flex-wrap gap-4 items-center justify-center text-[9px] font-extrabold text-blue-950 uppercase mt-4 pt-3 border-t border-blue-100">
                     <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 border border-white"></span> AMAN (OK)</span>
                     <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500 border border-white"></span> WASPADA (WARN)</span>
-                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-red-650 border border-white"></span> BAHAYA (DANGER)</span>
+                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-red-500 border border-white"></span> BAHAYA (DANGER)</span>
                     <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-gray-500 border border-white"></span> OFFLINE</span>
                 </div>
             </div>
@@ -297,7 +297,7 @@
                     </div>
                     <div>
                         <label class="text-[9px] font-extrabold text-blue-900 uppercase">Data Current / Metrics</label>
-                        <input type="text" id="info-sensor-metrics" value="Temp: 18.2°C | Hum: 86% | Gas: 450 ppm | pH: 4.8" class="w-full px-3 py-2 text-xs font-bold text-red-650 gui-input" readonly>
+                        <input type="text" id="info-sensor-metrics" value="Temp: 18.2°C | Hum: 86% | Gas: 450 ppm | pH: 4.8" class="w-full px-3 py-2 text-xs font-bold text-red-500 gui-input" readonly>
                     </div>
                 </div>
             </div>
@@ -340,7 +340,7 @@
                             <div id="info-barcode-details" class="text-[9px] text-gray-700 font-semibold leading-relaxed overflow-y-auto max-h-[85px] custom-scrollbar">
                                 <b>Sensor Code:</b> SENS-DG-01<br>
                                 <b>Sensor Name:</b> Sensor Ruang Daging<br>
-                                <b>Status:</b> <span class="font-bold text-red-650">Bahaya (Anomali Kritis)</span><br>
+                                <b>Status:</b> <span class="font-bold text-red-500">Bahaya (Anomali Kritis)</span><br>
                                 <b>Location:</b> Gudang Penyimpanan Daging A<br>
                                 <b>Diagnostics:</b> Deteksi bau gas amonia/pembusukan tinggi pada sampel daging cincang.
                             </div>
@@ -705,16 +705,16 @@
         } else {
             metricsInput.value = `Temp: ${data.temp}°C | Hum: ${data.hum}% | Gas: ${data.gas} ppm | pH: ${data.ph || '-'}`;
             if (data.status === 'danger') {
-                metricsInput.className = "w-full px-3 py-2 text-xs font-bold text-red-655 gui-input";
+                metricsInput.className = "w-full px-3 py-2 text-xs font-bold text-red-500 gui-input";
             } else if (data.status === 'warning') {
-                metricsInput.className = "w-full px-3 py-2 text-xs font-bold text-yellow-650 gui-input";
+                metricsInput.className = "w-full px-3 py-2 text-xs font-bold text-yellow-500 gui-input";
             } else {
                 metricsInput.className = "w-full px-3 py-2 text-xs font-bold text-emerald-600 gui-input";
             }
         }
 
         // Update detailed specs
-        const statusColor = data.status === 'safe' ? 'text-green-600' : data.status === 'warning' ? 'text-yellow-600' : data.status === 'danger' ? 'text-red-650' : 'text-gray-500';
+        const statusColor = data.status === 'safe' ? 'text-green-600' : data.status === 'warning' ? 'text-yellow-500' : data.status === 'danger' ? 'text-red-500' : 'text-gray-500';
         document.getElementById('info-barcode-details').innerHTML = `
             <b>Sensor Code:</b> ${data.code}<br>
             <b>Sensor Name:</b> ${data.name}<br>
@@ -901,7 +901,7 @@
 
         button.classList.add('confirm-state');
         button.classList.remove('text-gray-455', 'hover:text-red-500', 'hover:bg-red-50');
-        button.classList.add('text-white', 'bg-red-500', 'hover:bg-red-650', 'px-2.5', 'py-1', 'rounded-lg', 'shadow-sm');
+        button.classList.add('text-white', 'bg-red-500', 'hover:bg-red-600', 'px-2.5', 'py-1', 'rounded-lg', 'shadow-sm');
         
         const icon = button.querySelector('i');
         icon.classList.add('mr-1');
@@ -955,7 +955,7 @@
 
         button.classList.add('confirm-state');
         button.classList.remove('text-red-500', 'hover:text-white', 'hover:bg-red-500', 'border-red-200/50');
-        button.classList.add('text-white', 'bg-red-500', 'hover:bg-red-650', 'px-3', 'py-1.5', 'rounded-lg', 'shadow-sm');
+        button.classList.add('text-white', 'bg-red-500', 'hover:bg-red-600', 'px-3', 'py-1.5', 'rounded-lg', 'shadow-sm');
         
         const icon = button.querySelector('i');
         icon.classList.add('mr-1');

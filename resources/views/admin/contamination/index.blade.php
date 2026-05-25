@@ -14,11 +14,11 @@
     @if($logs->count() > 0)
     <form action="{{ route('admin.contamination.clear') }}" method="POST" class="inline-flex items-center gap-2">
         @csrf @method('DELETE')
-        <button type="button" onclick="confirmBulkDelete(this)" class="bg-red-50 text-red-655 hover:text-white hover:bg-red-600 border border-red-200/50 px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-sm shadow-red-100">
+        <button type="button" onclick="confirmBulkDelete(this)" class="bg-red-50 text-red-600 hover:text-white hover:bg-red-600 border border-red-200/50 px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-sm shadow-red-100">
             <i class="fa-solid fa-trash-can pointer-events-none"></i>
             <span class="bulk-text pointer-events-none">Hapus Semua Log</span>
         </button>
-        <button type="button" onclick="cancelBulkDelete(this)" class="hidden bulk-cancel bg-gray-100 text-gray-650 border border-gray-200 px-3 py-2.5 rounded-xl text-xs font-bold transition hover:bg-gray-200">Batal</button>
+        <button type="button" onclick="cancelBulkDelete(this)" class="hidden bulk-cancel bg-gray-100 text-gray-600 border border-gray-200 px-3 py-2.5 rounded-xl text-xs font-bold transition hover:bg-gray-200">Batal</button>
     </form>
     @endif
 </div>
@@ -137,7 +137,7 @@
                     
                     <!-- Food Category -->
                     <td class="px-6 py-4">
-                        <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-gray-50 text-gray-650 text-xs font-semibold border border-gray-100">
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-gray-50 text-gray-600 text-xs font-semibold border border-gray-100">
                             <i class="{{ $log->foodCategory->icon ?? 'fa-solid fa-box' }} mr-1.5 text-gray-450"></i>
                             {{ $log->foodCategory->name ?? 'Tanpa Kategori' }}
                         </span>
@@ -146,10 +146,10 @@
                     <!-- Severity Badge -->
                     <td class="px-6 py-4 text-center">
                         <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold border
-                            @if($log->severity==='kritis') bg-red-50 text-red-650 border-red-200/50
-                            @elseif($log->severity==='tinggi') bg-orange-50 text-orange-655 border-orange-200/50
-                            @elseif($log->severity==='sedang') bg-yellow-50 text-yellow-750 border-yellow-200/50
-                            @else bg-blue-50 text-blue-650 border-blue-200/50
+                            @if($log->severity==='kritis') bg-red-50 text-red-600 border-red-200/50
+                            @elseif($log->severity==='tinggi') bg-orange-50 text-orange-600 border-orange-200/50
+                            @elseif($log->severity==='sedang') bg-yellow-50 text-yellow-600 border-yellow-200/50
+                            @else bg-blue-50 text-blue-600 border-blue-200/50
                             @endif">
                             {{ ucfirst($log->severity) }}
                         </span>
@@ -194,7 +194,7 @@
                                     <i class="fa-solid fa-trash-can text-sm pointer-events-none"></i>
                                     <span class="text-xs font-bold hidden delete-text pointer-events-none">Yakin?</span>
                                 </button>
-                                <button type="button" onclick="cancelDelete(this)" class="hidden cancel-btn text-xs text-gray-400 hover:text-gray-655 transition font-semibold px-2 py-1">Batal</button>
+                                <button type="button" onclick="cancelDelete(this)" class="hidden cancel-btn text-xs text-gray-400 hover:text-gray-600 transition font-semibold px-2 py-1">Batal</button>
                             </form>
                         </div>
                     </td>
@@ -295,7 +295,7 @@ function confirmBulkDelete(button) {
     });
 
     button.classList.add('confirm-state');
-    button.classList.remove('bg-red-50', 'text-red-600', 'border-red-200/50', 'hover:bg-red-650');
+    button.classList.remove('bg-red-50', 'text-red-600', 'border-red-200/50', 'hover:bg-red-600');
     button.classList.add('bg-red-600', 'text-white', 'border-red-600', 'hover:bg-red-700');
     
     const icon = button.querySelector('i');
@@ -323,7 +323,7 @@ function resetBulkDelete(button) {
         clearTimeout(button.timeoutId);
     }
     button.classList.remove('confirm-state', 'bg-red-600', 'text-white', 'border-red-600', 'hover:bg-red-700');
-    button.classList.add('bg-red-50', 'text-red-600', 'border-red-200/50', 'hover:bg-red-655');
+    button.classList.add('bg-red-50', 'text-red-600', 'border-red-200/50', 'hover:bg-red-600');
     
     const icon = button.querySelector('i');
     icon.classList.remove('fa-triangle-exclamation');

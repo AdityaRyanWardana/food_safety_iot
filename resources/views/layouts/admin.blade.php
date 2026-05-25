@@ -131,7 +131,7 @@
                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                     <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                 </span>
-                <span class="text-[9px] font-black text-gray-650 uppercase tracking-wider">Interface Online: USB COM3 ready</span>
+                <span class="text-[9px] font-black text-gray-600 uppercase tracking-wider">Interface Online: USB COM3 ready</span>
             </div>
             
             <!-- Right: Profile & Windows Action Buttons -->
@@ -150,7 +150,7 @@
                     <div onclick="alert('Aplikasi sudah dimaksimalkan.')" class="w-3 h-3 rounded-full bg-green-500 hover:bg-green-600 cursor-pointer shadow-sm transition" title="Maximize"></div>
                     <form action="{{ route('logout') }}" method="POST" id="close-app-form" class="inline">
                         @csrf
-                        <div onclick="if(confirm('Keluar dari portal dan tutup sesi QC?')) document.getElementById('close-app-form').submit();" class="w-3 h-3 rounded-full bg-red-500 hover:bg-red-650 cursor-pointer shadow-sm transition" title="Keluar & Tutup Aplikasi"></div>
+                        <div onclick="if(confirm('Keluar dari portal dan tutup sesi QC?')) document.getElementById('close-app-form').submit();" class="w-3 h-3 rounded-full bg-red-500 hover:bg-red-600 cursor-pointer shadow-sm transition" title="Keluar & Tutup Aplikasi"></div>
                     </form>
                 </div>
             </div>

@@ -109,11 +109,11 @@
                     <!-- Type Badge -->
                     <td class="px-6 py-4">
                         <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold border
-                            @if($device->type === 'multi') bg-purple-50 text-purple-650 border-purple-200/50
-                            @elseif($device->type === 'temperature') bg-orange-50 text-orange-655 border-orange-200/50
-                            @elseif($device->type === 'humidity') bg-blue-50 text-blue-650 border-blue-200/50
-                            @elseif($device->type === 'gas') bg-yellow-50 text-yellow-750 border-yellow-200/50
-                            @else bg-teal-50 text-teal-650 border-teal-200/50
+                            @if($device->type === 'multi') bg-purple-50 text-purple-600 border-purple-200/50
+                            @elseif($device->type === 'temperature') bg-orange-50 text-orange-600 border-orange-200/50
+                            @elseif($device->type === 'humidity') bg-blue-50 text-blue-600 border-blue-200/50
+                            @elseif($device->type === 'gas') bg-yellow-50 text-yellow-600 border-yellow-200/50
+                            @else bg-teal-50 text-teal-600 border-teal-200/50
                             @endif">
                             <i class="
                                 @if($device->type === 'multi') fa-solid fa-microchip
@@ -127,7 +127,7 @@
                     </td>
                     
                     <!-- Location -->
-                    <td class="px-6 py-4 text-gray-650 font-semibold">
+                    <td class="px-6 py-4 text-gray-600 font-semibold">
                         {{ $device->location ?? '-' }}
                     </td>
                     
@@ -202,7 +202,7 @@
                 <i class="fa-solid fa-circle-plus text-brandGreen"></i>
                 Tambah Sensor Baru
             </h3>
-            <button onclick="document.getElementById('addDeviceModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-655 p-1.5 rounded-lg hover:bg-gray-100 transition">
+            <button onclick="document.getElementById('addDeviceModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600 p-1.5 rounded-lg hover:bg-gray-100 transition">
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
         </div>

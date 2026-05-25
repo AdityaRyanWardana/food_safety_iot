@@ -81,7 +81,7 @@
                 <i class="fa-solid fa-circle-plus text-brandGreen"></i>
                 Tambah Kategori Pangan
             </h3>
-            <button onclick="document.getElementById('addCatModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-650 p-1.5 rounded-lg hover:bg-gray-100 transition">
+            <button onclick="document.getElementById('addCatModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600 p-1.5 rounded-lg hover:bg-gray-100 transition">
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
         </div>

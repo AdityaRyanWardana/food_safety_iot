@@ -235,7 +235,7 @@
                                 <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold border shadow-sm
                                     @if($r->safety_status==='aman') bg-green-50 text-emerald-700 border-green-200/60
                                     @elseif($r->safety_status==='waspada') bg-yellow-50 text-yellow-700 border-yellow-200/60
-                                    @else bg-red-50 text-red-650 border-red-200/60
+                                    @else bg-red-50 text-red-600 border-red-200/60
                                     @endif">
                                     {{ ucfirst($r->safety_status) }}
                                 </span>
@@ -435,7 +435,7 @@ function showResult(data) {
         document.getElementById('resultTitle').textContent = 'WASPADA - Terdeteksi Anomali Ringan';
     } else {
         card.className = 'rounded-2xl shadow-sm border border-red-300 bg-red-50/50 p-6';
-        icon.className = 'w-14 h-14 rounded-2xl flex items-center justify-center text-3xl mr-4 bg-red-100/50 text-red-650 border border-red-200/50';
+        icon.className = 'w-14 h-14 rounded-2xl flex items-center justify-center text-3xl mr-4 bg-red-100/50 text-red-600 border border-red-200/50';
         icon.innerHTML = '<i class="fa-solid fa-skull-crossbones animate-pulse"></i>';
         document.getElementById('resultTitle').className = 'text-lg font-bold text-red-800';
         document.getElementById('resultTitle').textContent = 'BAHAYA - Kontaminasi Terdeteksi!';

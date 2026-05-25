@@ -109,21 +109,15 @@
         outline: none;
     }
     
-    /* High-tech Camera Bounding Boxes overlay */
-    .camera-overlay-box {
-        position: absolute;
-        border-width: 2px;
-        box-shadow: 0 0 8px currentColor;
-        font-size: 8px;
-        font-weight: 800;
-        text-transform: uppercase;
-        padding: 2px 4px;
-        animation: pulseOverlay 2s infinite ease-in-out;
+    /* MLP & KNN cluster visualizer styling */
+    .knn-connection-line {
+        stroke-dasharray: 4,4;
+        animation: dash 1s linear infinite;
     }
-    @keyframes pulseOverlay {
-        0% { opacity: 0.85; }
-        50% { opacity: 0.45; }
-        100% { opacity: 0.85; }
+    @keyframes dash {
+        to {
+            stroke-dashoffset: -20;
+        }
     }
 </style>
 
@@ -159,111 +153,275 @@
             </div>
         </div>
         
-        <!-- Nodes & Live Camera Section (Replicating exact layout of screenshot) -->
+        <!-- ==================== MLP vs KNN COMPARISON ENGINE ==================== -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             
-            <!-- Group A / Group B Nodes Grid (Left 7 cols) -->
+            <!-- Left Panel: 2-Sensor Selection and Live Calibration Controls (5 cols) -->
+            <div class="lg:col-span-5 gui-box rounded-2xl p-5 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between border-b-2 border-blue-100 pb-3 mb-4">
+                        <h2 class="text-xs font-extrabold text-blue-950 tracking-wide uppercase flex items-center gap-2">
+                            <i class="fa-solid fa-sliders text-blue-500 animate-pulse text-xs"></i>
+                            Sensor Selector & Live Calibration
+                        </h2>
+                        <span class="text-[10px] bg-blue-100 text-blue-700 font-bold px-2 py-0.5 rounded-md">Real-Time Metrics</span>
+                    </div>
+
+                    <!-- Sensor Selection buttons -->
+                    <div class="grid grid-cols-2 gap-3 mb-4">
+                        <button id="btn-select-sensor1" onclick="changeActiveSensor(1)" class="p-3 rounded-xl border-2 border-blue-500 bg-blue-50/50 flex flex-col items-center text-center transition duration-300">
+                            <i class="fa-solid fa-microchip text-blue-500 text-base mb-1"></i>
+                            <span class="text-xs font-black text-blue-950">Sensor 1</span>
+                            <span class="text-[9px] text-gray-500 font-bold">SENS-DG-01 (Meat)</span>
+                        </button>
+                        <button id="btn-select-sensor2" onclick="changeActiveSensor(2)" class="p-3 rounded-xl border-2 border-white hover:border-blue-200 bg-white flex flex-col items-center text-center transition duration-300">
+                            <i class="fa-solid fa-microchip text-gray-400 text-base mb-1"></i>
+                            <span class="text-xs font-bold text-gray-700">Sensor 2</span>
+                            <span class="text-[9px] text-gray-400 font-semibold">SENS-SY-02 (Veg)</span>
+                        </button>
+                    </div>
+
+                    <!-- Live Telemetry sliders -->
+                    <div class="space-y-4 bg-blue-50/40 border border-blue-100 p-4 rounded-xl">
+                        <div class="flex items-center justify-between">
+                            <span id="active-sensor-title" class="text-xs font-black text-blue-950 uppercase">Active Sensor: Sensor 1</span>
+                            <button id="btn-auto-simulate" onclick="toggleAutoSimulation()" class="text-[9px] font-extrabold px-2.5 py-1 rounded bg-brandGreen hover:bg-brandGreenHover text-white shadow-sm transition">
+                                <i class="fa-solid fa-play mr-1"></i>AUTO CYCLE
+                            </button>
+                        </div>
+                        <div class="border-t border-blue-100 my-2"></div>
+                        
+                        <div>
+                            <div class="flex justify-between text-[10px] font-extrabold text-blue-950 uppercase mb-1">
+                                <span>Temperature (<span id="slider-temp-val">18.2</span>°C)</span>
+                                <span class="text-gray-400 font-bold">Range: -10 to 50</span>
+                            </div>
+                            <input type="range" id="slider-temp" min="-10" max="50" step="0.1" value="18.2" oninput="updateCalibration()" class="w-full h-2 bg-blue-100 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-[10px] font-extrabold text-blue-950 uppercase mb-1">
+                                <span>Humidity (<span id="slider-hum-val">86.0</span>%)</span>
+                                <span class="text-gray-400 font-bold">Range: 0 to 100</span>
+                            </div>
+                            <input type="range" id="slider-hum" min="0" max="100" step="0.5" value="86" oninput="updateCalibration()" class="w-full h-2 bg-blue-100 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-[10px] font-extrabold text-blue-950 uppercase mb-1">
+                                <span>Gas level (<span id="slider-gas-val">450</span> ppm)</span>
+                                <span class="text-gray-400 font-bold">Range: 0 to 600</span>
+                            </div>
+                            <input type="range" id="slider-gas" min="0" max="600" step="5" value="450" oninput="updateCalibration()" class="w-full h-2 bg-blue-100 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-[10px] font-extrabold text-blue-950 uppercase mb-1">
+                                <span>pH level (<span id="slider-ph-val">4.8</span>)</span>
+                                <span class="text-gray-400 font-bold">Range: 0 to 14</span>
+                            </div>
+                            <input type="range" id="slider-ph" min="0" max="14" step="0.1" value="4.8" oninput="updateCalibration()" class="w-full h-2 bg-blue-100 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Side-by-side Live Values Panel -->
+                <div class="mt-4 pt-3 border-t border-blue-100">
+                    <div class="grid grid-cols-2 gap-2 text-[9px] font-extrabold text-blue-950 uppercase text-center font-mono">
+                        <div class="bg-white border border-blue-250 rounded-lg p-2.5">
+                            <span class="block text-[8px] text-gray-400 mb-0.5">SENS-DG-01 (Meat)</span>
+                            <span id="label-sensor1-val" class="font-bold text-[10px] text-red-500">18.2°C | 86% | 450ppm</span>
+                        </div>
+                        <div class="bg-white border border-blue-250 rounded-lg p-2.5">
+                            <span class="block text-[8px] text-gray-400 mb-0.5">SENS-SY-02 (Veg)</span>
+                            <span id="label-sensor2-val" class="font-bold text-[10px] text-yellow-600">12.5°C | 78% | 220ppm</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Panel: MLP vs KNN Intelligent Inference & Visualization Engine (7 cols) -->
             <div class="lg:col-span-7 gui-box rounded-2xl p-5 flex flex-col justify-between">
                 <div>
                     <div class="flex items-center justify-between border-b-2 border-blue-100 pb-3 mb-4">
                         <h2 class="text-xs font-extrabold text-blue-950 tracking-wide uppercase flex items-center gap-2">
-                            <i class="fa-solid fa-circle-nodes text-blue-500 animate-pulse text-xs"></i>
-                            Sensor Network Node Matrix
+                            <i class="fa-solid fa-brain text-blue-500"></i>
+                            MLP vs KNN Inference Engine
                         </h2>
-                        <span class="text-[10px] bg-blue-100 text-blue-700 font-bold px-2 py-0.5 rounded-md">24 Channels (A | B)</span>
+                        <span class="flex items-center gap-1">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                            <b class="text-[9px] text-emerald-600 uppercase tracking-widest font-black">ACTIVE ENGINE</b>
+                        </span>
                     </div>
-                    
-                    <!-- Channels layout -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Group A -->
-                        <div class="bg-blue-50/50 border border-blue-100 p-4 rounded-xl">
-                            <h3 class="text-xs font-black text-blue-900 tracking-wider text-center uppercase mb-3 pb-1 border-b border-blue-200/40">Group A (Laboratory)</h3>
-                            <div class="grid grid-cols-4 gap-y-3.5 gap-x-2 justify-items-center">
-                                <!-- A12 to A1 circular buttons -->
-                                <div id="node-12A" onclick="selectNode('12A')" class="gui-node node-gray">12A</div>
-                                <div id="node-11A" onclick="selectNode('11A')" class="gui-node node-gray">11A</div>
-                                <div id="node-10A" onclick="selectNode('10A')" class="gui-node node-gray">10A</div>
-                                <div id="node-9A" onclick="selectNode('9A')" class="gui-node node-gray">9A</div>
-                                <div id="node-8A" onclick="selectNode('8A')" class="gui-node node-gray">8A</div>
-                                <div id="node-7A" onclick="selectNode('7A')" class="gui-node node-gray">7A</div>
-                                <div id="node-6A" onclick="selectNode('6A')" class="gui-node node-gray">6A</div>
-                                <div id="node-5A" onclick="selectNode('5A')" class="gui-node node-gray">5A</div>
-                                <div id="node-4A" onclick="selectNode('4A')" class="gui-node node-green blink-green">4A</div>
-                                <div id="node-3A" onclick="selectNode('3A')" class="gui-node node-green blink-green">3A</div>
-                                <div id="node-2A" onclick="selectNode('2A')" class="gui-node node-yellow blink-yellow">2A</div>
-                                <div id="node-1A" onclick="selectNode('1A')" class="gui-node node-red blink-red">1A</div>
-                            </div>
-                        </div>
+
+                    <!-- Inner Grid: MLP vs KNN side-by-side -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         
-                        <!-- Group B -->
-                        <div class="bg-blue-50/50 border border-blue-100 p-4 rounded-xl">
-                            <h3 class="text-xs font-black text-blue-900 tracking-wider text-center uppercase mb-3 pb-1 border-b border-blue-200/40">Group B (Chillers)</h3>
-                            <div class="grid grid-cols-4 gap-y-3.5 gap-x-2 justify-items-center">
-                                <!-- B12 to B1 circular buttons -->
-                                <div id="node-12B" onclick="selectNode('12B')" class="gui-node node-gray">12B</div>
-                                <div id="node-11B" onclick="selectNode('11B')" class="gui-node node-gray">11B</div>
-                                <div id="node-10B" onclick="selectNode('10B')" class="gui-node node-gray">10B</div>
-                                <div id="node-9B" onclick="selectNode('9B')" class="gui-node node-gray">9B</div>
-                                <div id="node-8B" onclick="selectNode('8B')" class="gui-node node-gray">8B</div>
-                                <div id="node-7B" onclick="selectNode('7B')" class="gui-node node-gray">7B</div>
-                                <div id="node-6B" onclick="selectNode('6B')" class="gui-node node-gray">6B</div>
-                                <div id="node-5B" onclick="selectNode('5B')" class="gui-node node-gray">5B</div>
-                                <div id="node-4B" onclick="selectNode('4B')" class="gui-node node-gray">4B</div>
-                                <div id="node-3B" onclick="selectNode('3B')" class="gui-node node-gray">3B</div>
-                                <div id="node-2B" onclick="selectNode('2B')" class="gui-node node-gray">2B</div>
-                                <div id="node-1B" onclick="selectNode('1B')" class="gui-node node-gray">1B</div>
+                        <!-- MLP Panel -->
+                        <div class="bg-white border border-blue-100/70 p-4 rounded-xl flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-black text-blue-950 tracking-wide">1. MLP Neural Net</span>
+                                    <span class="text-[9px] bg-indigo-50 text-indigo-650 font-bold px-1.5 py-0.5 rounded">Softmax</span>
+                                </div>
+                                <div class="text-[9px] text-gray-400 font-bold mb-3">Model Accuracy: 98.6%</div>
+
+                                <!-- Neural Net Visual Diagram (SVG) -->
+                                <div class="w-full h-[110px] bg-slate-950 rounded-lg flex items-center justify-center p-2 mb-3 relative overflow-hidden border border-slate-800">
+                                    <svg class="w-full h-full" viewBox="0 0 200 100">
+                                        <!-- Synapse connections -->
+                                        <!-- Inputs (x=20) to Hidden (x=100) -->
+                                        <line x1="20" y1="20" x2="100" y2="15" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
+                                        <line x1="20" y1="20" x2="100" y2="32" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
+                                        <line x1="20" y1="20" x2="100" y2="50" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
+                                        <line x1="20" y1="20" x2="100" y2="68" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
+                                        <line x1="20" y1="20" x2="100" y2="85" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
+                                        
+                                        <line x1="20" y1="40" x2="100" y2="15" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
+                                        <line x1="20" y1="40" x2="100" y2="32" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
+                                        <line x1="20" y1="40" x2="100" y2="50" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
+                                        <line x1="20" y1="40" x2="100" y2="68" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
+                                        <line x1="20" y1="40" x2="100" y2="85" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
+
+                                        <line x1="20" y1="60" x2="100" y2="15" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
+                                        <line x1="20" y1="60" x2="100" y2="32" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
+                                        <line x1="20" y1="60" x2="100" y2="50" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
+                                        <line x1="20" y1="60" x2="100" y2="68" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
+                                        <line x1="20" y1="60" x2="100" y2="85" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
+
+                                        <line x1="20" y1="80" x2="100" y2="15" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
+                                        <line x1="20" y1="80" x2="100" y2="32" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
+                                        <line x1="20" y1="80" x2="100" y2="50" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
+                                        <line x1="20" y1="80" x2="100" y2="68" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
+                                        <line x1="20" y1="80" x2="100" y2="85" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
+
+                                        <!-- Hidden (x=100) to Outputs (x=180) -->
+                                        <line x1="100" y1="15" x2="180" y2="25" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
+                                        <line x1="100" y1="32" x2="180" y2="25" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
+                                        <line x1="100" y1="50" x2="180" y2="25" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
+                                        <line x1="100" y1="68" x2="180" y2="25" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
+                                        <line x1="100" y1="85" x2="180" y2="25" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
+
+                                        <line x1="100" y1="15" x2="180" y2="50" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
+                                        <line x1="100" y1="32" x2="180" y2="50" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
+                                        <line x1="100" y1="50" x2="180" y2="50" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
+                                        <line x1="100" y1="68" x2="180" y2="50" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
+                                        <line x1="100" y1="85" x2="180" y2="50" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
+
+                                        <line x1="100" y1="15" x2="180" y2="75" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
+                                        <line x1="100" y1="32" x2="180" y2="75" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
+                                        <line x1="100" y1="50" x2="180" y2="75" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
+                                        <line x1="100" y1="68" x2="180" y2="75" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
+                                        <line x1="100" y1="85" x2="180" y2="75" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
+
+                                        <!-- Nodes Drawing -->
+                                        <!-- Inputs -->
+                                        <circle cx="20" cy="20" r="4.5" fill="#3B82F6" id="mlp-node-i1" />
+                                        <circle cx="20" cy="40" r="4.5" fill="#3B82F6" id="mlp-node-i2" />
+                                        <circle cx="20" cy="60" r="4.5" fill="#3B82F6" id="mlp-node-i3" />
+                                        <circle cx="20" cy="80" r="4.5" fill="#3B82F6" id="mlp-node-i4" />
+
+                                        <!-- Hidden -->
+                                        <circle cx="100" cy="15" r="4" fill="#818CF8" class="animate-pulse" />
+                                        <circle cx="100" cy="32" r="4" fill="#818CF8" class="animate-pulse" />
+                                        <circle cx="100" cy="50" r="4" fill="#818CF8" class="animate-pulse" />
+                                        <circle cx="100" cy="68" r="4" fill="#818CF8" class="animate-pulse" />
+                                        <circle cx="100" cy="85" r="4" fill="#818CF8" class="animate-pulse" />
+
+                                        <!-- Outputs (Safe, Warn, Danger) -->
+                                        <circle cx="180" cy="25" r="5.5" fill="#10B981" id="mlp-node-o1" class="transition duration-300" />
+                                        <circle cx="180" cy="50" r="5.5" fill="#9CA3AF" id="mlp-node-o2" class="transition duration-300" />
+                                        <circle cx="180" cy="75" r="5.5" fill="#9CA3AF" id="mlp-node-o3" class="transition duration-300" />
+                                    </svg>
+                                    <div class="absolute right-2 bottom-1 flex flex-col gap-0.5 text-[7px] text-gray-500 font-mono">
+                                        <span class="text-[#10B981]">● Safe</span>
+                                        <span class="text-[#F59E0B]">● Warn</span>
+                                        <span class="text-[#EF4444]">● Danger</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between text-[10px] font-bold">
+                                <span class="text-gray-400">Class Probability:</span>
+                                <span id="mlp-prob-val" class="font-mono text-red-500 bg-red-50 px-2 py-0.5 rounded border border-red-150">BAHAYA (94.2%)</span>
                             </div>
                         </div>
+
+                        <!-- KNN Panel -->
+                        <div class="bg-white border border-blue-100/70 p-4 rounded-xl flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-black text-blue-950 tracking-wide">2. KNN Classifier</span>
+                                    <div class="flex items-center gap-1">
+                                        <span class="text-[9px] font-black text-gray-550 uppercase">K =</span>
+                                        <select id="knn-k-select" onchange="updateCalibration()" class="px-1.5 py-0.5 text-[9px] font-black text-gray-800 bg-gray-50 border border-gray-250 rounded">
+                                            <option value="3" selected>3</option>
+                                            <option value="5">5</option>
+                                            <option value="7">7</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="text-[9px] text-gray-400 font-bold mb-3">Model Accuracy: 94.2%</div>
+
+                                <!-- Scatter Plot Neighbors Visualization -->
+                                <div class="w-full h-[110px] bg-slate-950 rounded-lg relative overflow-hidden border border-slate-800 p-2 mb-3 flex items-center justify-center">
+                                    <!-- High-tech Grid overlay -->
+                                    <div class="absolute inset-0 bg-[linear-gradient(rgba(18,24,38,0)_94%,rgba(59,130,246,0.15)_94%),linear-gradient(90deg,rgba(18,24,38,0)_94%,rgba(59,130,246,0.15)_94%)] bg-[size:10px_10px] pointer-events-none opacity-40"></div>
+                                    
+                                    <!-- Dynamic points container -->
+                                    <div class="relative w-full h-full" id="knn-cluster-plot">
+                                        <!-- Fixed sample clusters (Green, Yellow, Red) and glowing White Query Point -->
+                                        <!-- Green Cluster -->
+                                        <span class="absolute w-2 h-2 rounded-full bg-emerald-500 border border-white" style="top: 75%; left: 25%;" title="Sample safe"></span>
+                                        <span class="absolute w-2 h-2 rounded-full bg-emerald-500 border border-white" style="top: 85%; left: 30%;" title="Sample safe"></span>
+                                        <span class="absolute w-2 h-2 rounded-full bg-emerald-500 border border-white" style="top: 65%; left: 20%;" title="Sample safe"></span>
+                                        <!-- Yellow Cluster -->
+                                        <span class="absolute w-2 h-2 rounded-full bg-amber-500 border border-white" style="top: 40%; left: 55%;" title="Sample warning"></span>
+                                        <span class="absolute w-2 h-2 rounded-full bg-amber-500 border border-white" style="top: 50%; left: 60%;" title="Sample warning"></span>
+                                        <span class="absolute w-2 h-2 rounded-full bg-amber-500 border border-white" style="top: 35%; left: 45%;" title="Sample warning"></span>
+                                        <!-- Red Cluster -->
+                                        <span class="absolute w-2 h-2 rounded-full bg-red-500 border border-white animate-pulse" style="top: 15%; left: 75%;" title="Sample danger"></span>
+                                        <span class="absolute w-2 h-2 rounded-full bg-red-500 border border-white animate-pulse" style="top: 25%; left: 85%;" title="Sample danger"></span>
+                                        <span class="absolute w-2 h-2 rounded-full bg-red-500 border border-white animate-pulse" style="top: 10%; left: 68%;" title="Sample danger"></span>
+                                        
+                                        <!-- SVG Connections for dynamic lines -->
+                                        <svg class="absolute inset-0 w-full h-full pointer-events-none" id="knn-svg-connections"></svg>
+                                        
+                                        <!-- Dynamic Query Point -->
+                                        <div id="knn-query-point" class="absolute w-3 h-3 rounded-full bg-white border-2 border-indigo-500 shadow-[0_0_12px_#6366f1] transition-all duration-200 z-10 animate-ping" style="top: 15%; left: 75%;"></div>
+                                        <div id="knn-query-point-solid" class="absolute w-3 h-3 rounded-full bg-white border-2 border-indigo-500 shadow-[0_0_8px_#6366f1] transition-all duration-200 z-10" style="top: 15%; left: 75%;"></div>
+                                    </div>
+                                    <div class="absolute right-2 bottom-1 flex flex-col gap-0.5 text-[7px] text-gray-500 font-mono">
+                                        <span class="text-[#6366f1] font-bold">Query point (X)</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between text-[10px] font-bold">
+                                <span class="text-gray-400">K-Nearest Neighbors:</span>
+                                <span id="knn-class-val" class="font-mono text-red-500 bg-red-50 px-2 py-0.5 rounded border border-red-150">BAHAYA (3/3 votes)</span>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
                 
-                <!-- Color legend -->
-                <div class="flex flex-wrap gap-4 items-center justify-center text-[9px] font-extrabold text-blue-950 uppercase mt-4 pt-3 border-t border-blue-100">
-                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 border border-white"></span> AMAN (OK)</span>
-                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500 border border-white"></span> WASPADA (WARN)</span>
-                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-red-500 border border-white"></span> BAHAYA (DANGER)</span>
-                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-gray-500 border border-white"></span> OFFLINE</span>
+                <!-- Bottom comparison metrics row -->
+                <div class="border-t border-blue-100 pt-3">
+                    <div class="bg-blue-50/50 border border-blue-100/50 rounded-xl px-4 py-2 flex items-center justify-between shadow-inner">
+                        <div class="flex items-center gap-2">
+                            <span class="text-[9px] font-extrabold text-blue-900 uppercase">Decision Consensus:</span>
+                            <span id="badge-consensus" class="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-emerald-500 text-white flex items-center gap-1 shadow-sm">
+                                <i class="fa-solid fa-circle-check"></i> Models Match
+                            </span>
+                        </div>
+                        <div class="flex items-center gap-4 text-[9px] font-extrabold text-blue-955 uppercase font-mono">
+                            <span>MLP Latency: <b class="text-indigo-600">1.2ms</b></span>
+                            <span class="text-gray-250">|</span>
+                            <span>KNN Latency: <b class="text-indigo-600">0.4ms</b></span>
+                        </div>
+                    </div>
                 </div>
             </div>
             
-            <!-- Live Computer Vision Camera Feed (Right 5 cols) -->
-            <div class="lg:col-span-5 gui-box rounded-2xl p-5 flex flex-col">
-                <div class="flex items-center justify-between border-b-2 border-blue-100 pb-3 mb-4">
-                    <h2 class="text-xs font-extrabold text-blue-950 tracking-wide uppercase flex items-center gap-2">
-                        <i class="fa-solid fa-camera text-blue-500"></i>
-                        Live Inspection Camera
-                    </h2>
-                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span> <b class="text-[9px] text-red-550 uppercase tracking-widest font-black">REC</b></span>
-                </div>
-                
-                <div class="relative w-full aspect-video rounded-xl border-3 border-white bg-slate-950 overflow-hidden shadow-inner flex items-center justify-center">
-                    <!-- Camera Feed Image -->
-                    <img id="camera-feed-img" src="{{ asset('assets/food_camera_inspection.png') }}" class="w-full h-full object-cover opacity-90 transition duration-300" alt="Food Inspection Live">
-                    
-                    <!-- High Tech Grid CSS Overlay -->
-                    <div class="absolute inset-0 bg-[linear-gradient(rgba(18,24,38,0)_95%,rgba(59,130,246,0.1)_95%),linear-gradient(90deg,rgba(18,24,38,0)_95%,rgba(59,130,246,0.1)_95%)] bg-[size:20px_20px] pointer-events-none"></div>
-                    
-                    <!-- Bounding boxes overlays -->
-                    <div id="cam-box-danger" class="camera-overlay-box text-red-500 border-red-500" style="top: 25%; left: 10%; width: 26%; height: 50%;">
-                        [A1] DANGER: DECOMPOSITION
-                    </div>
-                    <div id="cam-box-warning" class="camera-overlay-box text-yellow-500 border-yellow-500" style="top: 15%; left: 42%; width: 22%; height: 42%;">
-                        [A2] WARN: HUMIDITY ANOMALY
-                    </div>
-                    <div id="cam-box-safe" class="camera-overlay-box text-emerald-500 border-emerald-500" style="top: 30%; left: 70%; width: 24%; height: 45%;">
-                        [A3] SAFE: OPTIMAL
-                    </div>
-                    
-                    <!-- Disabled Camera Cover -->
-                    <div id="camera-standby-screen" class="absolute inset-0 bg-slate-900 hidden flex-col items-center justify-center gap-3">
-                        <div class="w-14 h-14 rounded-full bg-slate-800 flex items-center justify-center text-slate-500 border border-slate-700">
-                            <i class="fa-solid fa-video-slash text-2xl"></i>
-                        </div>
-                        <span class="text-xs font-black text-slate-400 uppercase tracking-widest">CAMERA FEED DISABLED</span>
-                        <span class="text-[9px] text-slate-500 font-bold uppercase">STANDBY MODE</span>
-                    </div>
-                </div>
-            </div>
         </div>
         
         <!-- Bottom Information Display Panel -->
@@ -581,163 +739,338 @@
 <!-- ==================== JAVASCRIPT SIMULATION & CONTROLLER INTERACTION ==================== -->
 <script>
     // -----------------------------------------------------------------
-    // Node Database & Simulation Setup
+    // 2-Sensor Specifications & Calibration Data Setup
     // -----------------------------------------------------------------
-    const sensorNodesData = {
-        '1A': {
+    const sensors = {
+        1: {
             code: 'SENS-DG-01',
             name: 'Sensor Ruang Daging',
-            status: 'danger',
+            location: 'Gudang Penyimpanan Daging A',
             temp: 18.2,
             hum: 86.0,
             gas: 450,
             ph: 4.8,
-            location: 'Gudang Penyimpanan Daging A',
-            safety: 'Bahaya (Dekomposisi Gas)',
             note: 'Tingkat kontaminasi gas amonia tinggi pada daging cincang.'
         },
-        '2A': {
+        2: {
             code: 'SENS-SY-02',
             name: 'Sensor Rak Sayur',
-            status: 'warning',
+            location: 'Chiller Sayuran B',
             temp: 12.5,
             hum: 78.0,
             gas: 220,
             ph: 6.8,
-            location: 'Chiller Sayuran B',
-            safety: 'Waspada (Suhu & Gas Meningkat)',
             note: 'Suhu chiller agak hangat, indikasi awal pembusukan daun sayur.'
-        },
-        '3A': {
-            code: 'SENS-MS-03',
-            name: 'Sensor Counter Saji',
-            status: 'safe',
-            temp: 65.0,
-            hum: 30.0,
-            gas: 45,
-            ph: 6.5,
-            location: 'Area Saji Hangat C',
-            safety: 'Aman (Optimal)',
-            note: 'Suhu area saji hangat stabil, kebersihan optimal.'
-        },
-        '4A': {
-            code: 'ESP32-XXSR-69',
-            name: 'ESP32 xxsr69',
-            status: 'safe',
-            temp: 24.5,
-            hum: 55.0,
-            gas: 90,
-            ph: 7.0,
-            location: 'Laboratorium Utama',
-            safety: 'Aman (Kondisi Normal)',
-            note: 'Kalibrasi sensor dalam batas toleransi normal.'
-        },
-        '5A': {
-            code: 'SENS-OFF-04',
-            name: 'Sensor Cadangan',
-            status: 'offline',
-            temp: null,
-            hum: null,
-            gas: null,
-            ph: null,
-            location: 'Ruang Lab Kalibrasi',
-            safety: 'Offline',
-            note: 'Perangkat dinonaktifkan atau dalam pemeliharaan.'
         }
     };
 
-    // Auto-generate virtual slots for the rest of channels (6A-12A, 1B-12B)
-    for (let i = 6; i <= 12; i++) {
-        sensorNodesData[i + 'A'] = {
-            code: `SENS-VIRT-A${i}`,
-            name: `Virtual Node A${i}`,
-            status: 'offline',
-            temp: null,
-            hum: null,
-            gas: null,
-            ph: null,
-            location: 'Ready Slot - Virtual Channel',
-            safety: 'Offline (Virtual)',
-            note: 'Saluran kosong siap digunakan.'
-        };
-    }
-    for (let i = 1; i <= 12; i++) {
-        sensorNodesData[i + 'B'] = {
-            code: `SENS-VIRT-B${i}`,
-            name: `Virtual Node B${i}`,
-            status: 'offline',
-            temp: null,
-            hum: null,
-            gas: null,
-            ph: null,
-            location: 'Ready Slot - Virtual Channel',
-            safety: 'Offline (Virtual)',
-            note: 'Saluran kosong siap digunakan.'
-        };
-    }
+    const knnTrainingSet = [
+        { name: 'S1', T: 4.2, H: 68.0, G: 120, pH: 6.2, label: 'aman', x_plot: 25, y_plot: 75 },
+        { name: 'S2', T: 3.5, H: 65.0, G: 100, pH: 6.5, label: 'aman', x_plot: 30, y_plot: 85 },
+        { name: 'S3', T: 5.0, H: 62.0, G: 90, pH: 6.0, label: 'aman', x_plot: 20, y_plot: 65 },
+        { name: 'W1', T: 12.5, H: 78.0, G: 220, pH: 6.8, label: 'waspada', x_plot: 55, y_plot: 40 },
+        { name: 'W2', T: 10.0, H: 74.0, G: 210, pH: 6.5, label: 'waspada', x_plot: 60, y_plot: 50 },
+        { name: 'W3', T: 11.5, H: 80.0, G: 190, pH: 7.2, label: 'waspada', x_plot: 45, y_plot: 35 },
+        { name: 'D1', T: 18.2, H: 86.0, G: 450, pH: 4.8, label: 'bahaya', x_plot: 75, y_plot: 15 },
+        { name: 'D2', T: 22.0, H: 88.0, G: 480, pH: 4.5, label: 'bahaya', x_plot: 85, y_plot: 25 },
+        { name: 'D3', T: 35.0, H: 92.0, G: 510, pH: 5.0, label: 'bahaya', x_plot: 68, y_plot: 10 }
+    ];
 
-    // -----------------------------------------------------------------
-    // Node Selection Logic
-    // -----------------------------------------------------------------
-    function selectNode(nodeId) {
-        // Clear highlights
-        document.querySelectorAll('.gui-node').forEach(el => {
-            el.classList.remove('ring-4', 'ring-blue-500', 'scale-110');
-        });
+    let activeSensorId = 1;
+    let autoSimInterval = null;
+    let autoSimTime = 0;
 
-        // Add highlight
-        const activeNode = document.getElementById(`node-${nodeId}`);
-        if (activeNode) {
-            activeNode.classList.add('ring-4', 'ring-blue-500', 'scale-110');
+    function changeActiveSensor(sensorId) {
+        activeSensorId = sensorId;
+        
+        // Toggle active state classes on buttons
+        const btn1 = document.getElementById('btn-select-sensor1');
+        const btn2 = document.getElementById('btn-select-sensor2');
+        
+        if (sensorId === 1) {
+            btn1.className = "p-3 rounded-xl border-2 border-blue-500 bg-blue-50/50 flex flex-col items-center text-center transition duration-300";
+            btn1.querySelector('i').className = "fa-solid fa-microchip text-blue-500 text-base mb-1";
+            btn1.querySelector('span').className = "text-xs font-black text-blue-950";
+            
+            btn2.className = "p-3 rounded-xl border-2 border-white hover:border-blue-200 bg-white flex flex-col items-center text-center transition duration-300";
+            btn2.querySelector('i').className = "fa-solid fa-microchip text-gray-400 text-base mb-1";
+            btn2.querySelector('.text-xs').className = "text-xs font-bold text-gray-700";
+        } else {
+            btn2.className = "p-3 rounded-xl border-2 border-blue-500 bg-blue-50/50 flex flex-col items-center text-center transition duration-300";
+            btn2.querySelector('i').className = "fa-solid fa-microchip text-blue-500 text-base mb-1";
+            btn2.querySelectorAll('span')[0].className = "text-xs font-black text-blue-950";
+            
+            btn1.className = "p-3 rounded-xl border-2 border-white hover:border-blue-200 bg-white flex flex-col items-center text-center transition duration-300";
+            btn1.querySelector('i').className = "fa-solid fa-microchip text-gray-400 text-base mb-1";
+            btn1.querySelector('span').className = "text-xs font-bold text-gray-700";
         }
 
-        const data = sensorNodesData[nodeId];
+        document.getElementById('active-sensor-title').textContent = `Active Sensor: Sensor ${sensorId}`;
+        
+        // Load sensor values to sliders
+        const sensor = sensors[sensorId];
+        document.getElementById('slider-temp').value = sensor.temp;
+        document.getElementById('slider-hum').value = sensor.hum;
+        document.getElementById('slider-gas').value = sensor.gas;
+        document.getElementById('slider-ph').value = sensor.ph;
 
-        // Update fields
-        document.getElementById('info-sensor-code').value = data.code;
-        document.getElementById('info-sensor-name').value = data.name;
-        document.getElementById('info-sensor-location').value = data.location;
+        updateCalibrationValues();
+        updateCalibration();
+        logConsole(`Switched control to Sensor ${sensorId} (${sensor.code})`);
+    }
+
+    function updateCalibrationValues() {
+        document.getElementById('slider-temp-val').textContent = parseFloat(document.getElementById('slider-temp').value).toFixed(1);
+        document.getElementById('slider-hum-val').textContent = parseFloat(document.getElementById('slider-hum').value).toFixed(1);
+        document.getElementById('slider-gas-val').textContent = parseInt(document.getElementById('slider-gas').value);
+        document.getElementById('slider-ph-val').textContent = parseFloat(document.getElementById('slider-ph').value).toFixed(1);
+    }
+
+    function normalize(val, min, max) {
+        return (val - min) / (max - min);
+    }
+
+    // -----------------------------------------------------------------
+    // MLP and KNN Live Inference Logic
+    // -----------------------------------------------------------------
+    function updateCalibration() {
+        updateCalibrationValues();
+        
+        const temp = parseFloat(document.getElementById('slider-temp').value);
+        const hum = parseFloat(document.getElementById('slider-hum').value);
+        const gas = parseInt(document.getElementById('slider-gas').value);
+        const ph = parseFloat(document.getElementById('slider-ph').value);
+
+        // Update active sensor data
+        sensors[activeSensorId].temp = temp;
+        sensors[activeSensorId].hum = hum;
+        sensors[activeSensorId].gas = gas;
+        sensors[activeSensorId].ph = ph;
+
+        // Update live metrics labels
+        document.getElementById('label-sensor1-val').textContent = `${sensors[1].temp.toFixed(1)}°C | ${sensors[1].hum.toFixed(0)}% | ${sensors[1].gas}ppm`;
+        document.getElementById('label-sensor2-val').textContent = `${sensors[2].temp.toFixed(1)}°C | ${sensors[2].hum.toFixed(0)}% | ${sensors[2].gas}ppm`;
+
+        // Style the labels based on safety status
+        const sens1Safety = getQuickSafetyLabel(sensors[1].temp, sensors[1].hum, sensors[1].gas, sensors[1].ph);
+        const sens2Safety = getQuickSafetyLabel(sensors[2].temp, sensors[2].hum, sensors[2].gas, sensors[2].ph);
+
+        document.getElementById('label-sensor1-val').className = `font-bold text-[10px] ${sens1Safety === 'bahaya' ? 'text-red-500 animate-pulse' : sens1Safety === 'waspada' ? 'text-yellow-600' : 'text-emerald-600'}`;
+        document.getElementById('label-sensor2-val').className = `font-bold text-[10px] ${sens2Safety === 'bahaya' ? 'text-red-500 animate-pulse' : sens2Safety === 'waspada' ? 'text-yellow-600' : 'text-emerald-600'}`;
+
+        // 1. Run MLP
+        let dangerScore = 0.0;
+        let warningScore = 0.0;
+
+        if (temp > 40 || temp < -5) dangerScore += 2.0;
+        else if (temp > 8 || temp < 0) warningScore += 1.0;
+
+        if (hum > 85 || hum < 10) dangerScore += 2.0;
+        else if (hum > 70 || hum < 20) warningScore += 1.0;
+
+        if (gas > 400) dangerScore += 3.0;
+        else if (gas > 200) warningScore += 1.5;
+
+        if (ph > 9 || ph < 2) dangerScore += 2.0;
+        else if (ph > 7.5 || ph < 3.5) warningScore += 1.0;
+
+        const logitDanger = 2.5 * dangerScore - 1.5;
+        const logitWarning = 1.8 * warningScore - 0.5;
+        const logitSafe = 5.0 - 2.5 * dangerScore - 1.2 * warningScore;
+
+        const eDanger = Math.exp(logitDanger);
+        const eWarning = Math.exp(logitWarning);
+        const eSafe = Math.exp(logitSafe);
+        const sum = eDanger + eWarning + eSafe;
+
+        const pDanger = eDanger / sum;
+        const pWarning = eWarning / sum;
+        const pSafe = eSafe / sum;
+
+        let mlpClass = 'aman';
+        let mlpProb = pSafe;
+
+        if (pDanger > pWarning && pDanger > pSafe) {
+            mlpClass = 'bahaya';
+            mlpProb = pDanger;
+        } else if (pWarning > pDanger && pWarning > pSafe) {
+            mlpClass = 'waspada';
+            mlpProb = pWarning;
+        }
+
+        // Update MLP UI
+        const mlpBadge = document.getElementById('mlp-prob-val');
+        mlpBadge.textContent = `${mlpClass.toUpperCase()} (${(mlpProb * 100).toFixed(1)}%)`;
+        mlpBadge.className = `font-mono px-2 py-0.5 rounded border ${mlpClass === 'bahaya' ? 'text-red-500 bg-red-50 border-red-150' : mlpClass === 'waspada' ? 'text-yellow-600 bg-yellow-50 border-yellow-150' : 'text-emerald-600 bg-emerald-50 border-emerald-150'}`;
+
+        // SVG Neural Nodes glowing effect
+        const nodeO1 = document.getElementById('mlp-node-o1'); // Safe
+        const nodeO2 = document.getElementById('mlp-node-o2'); // Warning
+        const nodeO3 = document.getElementById('mlp-node-o3'); // Danger
+
+        nodeO1.setAttribute('fill', `rgba(16, 185, 129, ${0.15 + 0.85 * pSafe})`);
+        nodeO1.setAttribute('r', mlpClass === 'aman' ? '7.5' : '5.5');
+        nodeO1.setAttribute('stroke', mlpClass === 'aman' ? '#FFFFFF' : 'none');
+        if (mlpClass === 'aman') nodeO1.setAttribute('stroke-width', '1.5');
+
+        nodeO2.setAttribute('fill', `rgba(245, 158, 11, ${0.15 + 0.85 * pWarning})`);
+        nodeO2.setAttribute('r', mlpClass === 'waspada' ? '7.5' : '5.5');
+        nodeO2.setAttribute('stroke', mlpClass === 'waspada' ? '#FFFFFF' : 'none');
+        if (mlpClass === 'waspada') nodeO2.setAttribute('stroke-width', '1.5');
+
+        nodeO3.setAttribute('fill', `rgba(239, 68, 68, ${0.15 + 0.85 * pDanger})`);
+        nodeO3.setAttribute('r', mlpClass === 'bahaya' ? '7.5' : '5.5');
+        nodeO3.setAttribute('stroke', mlpClass === 'bahaya' ? '#FFFFFF' : 'none');
+        if (mlpClass === 'bahaya') nodeO3.setAttribute('stroke-width', '1.5');
+
+
+        // 2. Run KNN
+        const k = parseInt(document.getElementById('knn-k-select').value) || 3;
+        
+        const t_norm = normalize(temp, -10, 50);
+        const h_norm = normalize(hum, 0, 100);
+        const g_norm = normalize(gas, 0, 600);
+        const ph_norm = normalize(ph, 0, 14);
+
+        const distances = knnTrainingSet.map(item => {
+            const item_t = normalize(item.T, -10, 50);
+            const item_h = normalize(item.H, 0, 100);
+            const item_g = normalize(item.G, 0, 600);
+            const item_ph = normalize(item.pH, 0, 14);
+
+            const dist = Math.sqrt(
+                Math.pow(t_norm - item_t, 2) +
+                Math.pow(h_norm - item_h, 2) +
+                Math.pow(g_norm - item_g, 2) +
+                Math.pow(ph_norm - item_ph, 2)
+            );
+            return { item, dist };
+        });
+
+        distances.sort((a, b) => a.dist - b.dist);
+        const neighbors = distances.slice(0, k);
+
+        const votes = { 'aman': 0, 'waspada': 0, 'bahaya': 0 };
+        neighbors.forEach(n => {
+            votes[n.item.label]++;
+        });
+
+        let knnClass = 'aman';
+        let knnVotes = votes['aman'];
+
+        if (votes['bahaya'] > votes['waspada'] && votes['bahaya'] > votes['aman']) {
+            knnClass = 'bahaya';
+            knnVotes = votes['bahaya'];
+        } else if (votes['waspada'] > votes['bahaya'] && votes['waspada'] > votes['aman']) {
+            knnClass = 'waspada';
+            knnVotes = votes['waspada'];
+        } else if (votes['aman'] >= votes['bahaya'] && votes['aman'] >= votes['waspada']) {
+            // handle tie or majority safe
+            knnClass = 'aman';
+            knnVotes = votes['aman'];
+        }
+
+        const knnConfidence = (knnVotes / k) * 100;
+
+        // Update KNN UI
+        const knnBadge = document.getElementById('knn-class-val');
+        knnBadge.textContent = `${knnClass.toUpperCase()} (${knnVotes}/${k} votes)`;
+        knnBadge.className = `font-mono px-2 py-0.5 rounded border ${knnClass === 'bahaya' ? 'text-red-500 bg-red-50 border-red-150' : knnClass === 'waspada' ? 'text-yellow-600 bg-yellow-50 border-yellow-150' : 'text-emerald-600 bg-emerald-50 border-emerald-150'}`;
+
+        // Project dynamic query point in 2D plot space
+        const x_plot = 15 + 70 * (t_norm * 0.5 + h_norm * 0.5);
+        const y_plot = 15 + 70 * (1.0 - (g_norm * 0.6 + ph_norm * 0.4)); // high gas / pH anomalies go upper
+
+        const querySolid = document.getElementById('knn-query-point-solid');
+        const queryPing = document.getElementById('knn-query-point');
+
+        querySolid.style.left = `${x_plot}%`;
+        querySolid.style.top = `${y_plot}%`;
+        queryPing.style.left = `${x_plot}%`;
+        queryPing.style.top = `${y_plot}%`;
+
+        // Render line connections to K nearest neighbors
+        const svgConn = document.getElementById('knn-svg-connections');
+        svgConn.innerHTML = '';
+        neighbors.forEach(n => {
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', `${x_plot}%`);
+            line.setAttribute('y1', `${y_plot}%`);
+            line.setAttribute('x2', `${n.item.x_plot}%`);
+            line.setAttribute('y2', `${n.item.y_plot}%`);
+            
+            let color = 'rgba(16, 185, 129, 0.45)'; // Safe
+            if (n.item.label === 'waspada') color = 'rgba(245, 158, 11, 0.45)';
+            else if (n.item.label === 'bahaya') color = 'rgba(239, 68, 68, 0.45)';
+            
+            line.setAttribute('stroke', color);
+            line.setAttribute('stroke-width', '1.5');
+            line.setAttribute('class', 'knn-connection-line');
+            svgConn.appendChild(line);
+        });
+
+        // 3. Update Decision Consensus
+        const consensusBadge = document.getElementById('badge-consensus');
+        if (mlpClass === knnClass) {
+            consensusBadge.className = "text-[9px] font-black uppercase px-2 py-0.5 rounded bg-emerald-500 text-white flex items-center gap-1 shadow-sm";
+            consensusBadge.innerHTML = '<i class="fa-solid fa-circle-check"></i> Models Match';
+        } else {
+            consensusBadge.className = "text-[9px] font-black uppercase px-2 py-0.5 rounded bg-amber-500 text-white flex items-center gap-1 shadow-sm";
+            consensusBadge.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Discrepancy';
+        }
+
+        // 4. Update Bottom Panels
+        const currentActive = sensors[activeSensorId];
+        document.getElementById('info-sensor-code').value = currentActive.code;
+        document.getElementById('info-sensor-name').value = currentActive.name;
+        document.getElementById('info-sensor-location').value = currentActive.location;
 
         const metricsInput = document.getElementById('info-sensor-metrics');
-        if (data.status === 'offline') {
-            metricsInput.value = 'N/A (Device Offline / Inactive)';
-            metricsInput.className = "w-full px-3 py-2 text-xs font-bold text-gray-500 gui-input";
+        metricsInput.value = `Temp: ${temp.toFixed(1)}°C | Hum: ${hum.toFixed(0)}% | Gas: ${gas} ppm | pH: ${ph.toFixed(1)}`;
+        
+        const finalClass = mlpClass; // consensus default to MLP
+        if (finalClass === 'bahaya') {
+            metricsInput.className = "w-full px-3 py-2 text-xs font-bold text-red-500 gui-input";
+        } else if (finalClass === 'waspada') {
+            metricsInput.className = "w-full px-3 py-2 text-xs font-bold text-yellow-600 gui-input";
         } else {
-            metricsInput.value = `Temp: ${data.temp}°C | Hum: ${data.hum}% | Gas: ${data.gas} ppm | pH: ${data.ph || '-'}`;
-            if (data.status === 'danger') {
-                metricsInput.className = "w-full px-3 py-2 text-xs font-bold text-red-500 gui-input";
-            } else if (data.status === 'warning') {
-                metricsInput.className = "w-full px-3 py-2 text-xs font-bold text-yellow-500 gui-input";
-            } else {
-                metricsInput.className = "w-full px-3 py-2 text-xs font-bold text-emerald-600 gui-input";
-            }
+            metricsInput.className = "w-full px-3 py-2 text-xs font-bold text-emerald-600 gui-input";
         }
 
-        // Update detailed specs
-        const statusColor = data.status === 'safe' ? 'text-green-600' : data.status === 'warning' ? 'text-yellow-500' : data.status === 'danger' ? 'text-red-500' : 'text-gray-500';
+        // Barcode Specs panel details
+        const statusColor = finalClass === 'aman' ? 'text-green-600' : finalClass === 'waspada' ? 'text-yellow-500' : 'text-red-500';
+        const safetyStatusText = finalClass === 'aman' ? 'AMAN (Optimal)' : finalClass === 'waspada' ? 'WASPADA (Anomali)' : 'BAHAYA (KONTAMINASI)';
+        const diagNote = finalClass === 'bahaya' ? 'Kadar kontaminasi gas dan pH kritis. Disarankan pengujian laboratorium lanjutan.' : finalClass === 'waspada' ? 'Suhu / Kelembaban di luar batas normal. Periksa sistem chiller.' : 'Metrik sensor dalam batas aman optimal.';
+        
         document.getElementById('info-barcode-details').innerHTML = `
-            <b>Sensor Code:</b> ${data.code}<br>
-            <b>Sensor Name:</b> ${data.name}<br>
-            <b>Status:</b> <span class="font-extrabold ${statusColor}">${data.safety.toUpperCase()}</span><br>
-            <b>Location:</b> ${data.location}<br>
-            <b>Diagnostics:</b> ${data.note || 'N/A'}<br>
-            <b>Last Checked:</b> ${new Date().toLocaleTimeString()}
+            <b>Sensor Code:</b> ${currentActive.code}<br>
+            <b>Sensor Name:</b> ${currentActive.name}<br>
+            <b>Status:</b> <span class="font-extrabold ${statusColor}">${safetyStatusText}</span><br>
+            <b>Location:</b> ${currentActive.location}<br>
+            <b>Diagnostics:</b> ${diagNote}<br>
+            <b>Consensus:</b> MLP (${mlpClass.toUpperCase()}) | KNN (${knnClass.toUpperCase()})
         `;
+    }
 
-        // Highlight/pulsate related overlay box in Live Camera
-        document.querySelectorAll('.camera-overlay-box').forEach(box => {
-            box.classList.remove('ring-4', 'ring-white', 'opacity-100');
-        });
+    function getQuickSafetyLabel(t, h, g, ph) {
+        let dangerCount = 0;
+        let warningCount = 0;
 
-        if (nodeId === '1A') {
-            document.getElementById('cam-box-danger').classList.add('ring-4', 'ring-white', 'opacity-100');
-        } else if (nodeId === '2A') {
-            document.getElementById('cam-box-warning').classList.add('ring-4', 'ring-white', 'opacity-100');
-        } else if (nodeId === '3A' || nodeId === '4A') {
-            document.getElementById('cam-box-safe').classList.add('ring-4', 'ring-white', 'opacity-100');
-        }
+        if (t > 40 || t < -5) dangerCount++;
+        else if (t > 8 || t < 0) warningCount++;
 
-        logConsole(`Selected Node ${nodeId} (${data.code}) - Status: ${data.safety.toUpperCase()}`);
+        if (h > 85 || h < 10) dangerCount++;
+        else if (h > 70 || h < 20) warningCount++;
+
+        if (g > 400) dangerCount++;
+        else if (g > 200) warningCount++;
+
+        if (ph > 9 || ph < 2) dangerCount++;
+        else if (ph > 7.5 || ph < 3.5) warningCount++;
+
+        if (dangerCount >= 1) return 'bahaya';
+        if (warningCount >= 1) return 'waspada';
+        return 'aman';
     }
 
     // -----------------------------------------------------------------
@@ -809,18 +1142,58 @@
         }
     }
 
-    function toggleCameraFeed() {
-        const screen = document.getElementById('camera-standby-screen');
-        const img = document.getElementById('camera-feed-img');
-
-        if (screen.classList.contains('hidden')) {
-            screen.classList.remove('hidden');
-            img.classList.add('opacity-0');
-            logConsole(`Camera hardware feed disconnected.`);
+    // -----------------------------------------------------------------
+    // Interactive Simulation Toggles (Auto Cycle & Sliders Tickers)
+    // -----------------------------------------------------------------
+    function toggleAutoSimulation() {
+        const btn = document.getElementById('btn-auto-simulate');
+        if (autoSimInterval) {
+            clearInterval(autoSimInterval);
+            autoSimInterval = null;
+            btn.innerHTML = '<i class="fa-solid fa-play mr-1"></i>AUTO CYCLE';
+            btn.className = "text-[9px] font-extrabold px-2.5 py-1 rounded bg-brandGreen hover:bg-brandGreenHover text-white shadow-sm transition";
+            logConsole(`Automatic simulation cycle PAUSED.`);
         } else {
-            screen.classList.add('hidden');
-            img.classList.remove('opacity-0');
-            logConsole(`Camera hardware feed re-established.`);
+            logConsole(`Automatic simulation cycle STARTED.`);
+            btn.innerHTML = '<i class="fa-solid fa-pause mr-1"></i>PAUSE CYCLE';
+            btn.className = "text-[9px] font-extrabold px-2.5 py-1 rounded bg-red-500 hover:bg-red-600 text-white shadow-sm transition";
+            
+            autoSimInterval = setInterval(() => {
+                autoSimTime += 0.15;
+                
+                // Oscillate sliders based on sine waves to demonstrate dynamic ML outputs
+                let t_val, h_val, g_val, ph_val;
+                
+                if (activeSensorId === 1) {
+                    t_val = 18.2 + 15.0 * Math.sin(autoSimTime);
+                    h_val = 65.0 + 20.0 * Math.sin(autoSimTime * 1.2);
+                    g_val = Math.round(280 + 220 * Math.sin(autoSimTime * 0.8));
+                    ph_val = 5.5 + 2.0 * Math.cos(autoSimTime * 0.9);
+                } else {
+                    t_val = 8.5 + 8.0 * Math.sin(autoSimTime);
+                    h_val = 75.0 + 15.0 * Math.cos(autoSimTime * 0.7);
+                    g_val = Math.round(180 + 150 * Math.sin(autoSimTime * 1.1));
+                    ph_val = 6.8 + 1.2 * Math.sin(autoSimTime * 1.3);
+                }
+
+                // Constraints to range limits
+                t_val = Math.max(-10, Math.min(50, t_val));
+                h_val = Math.max(0, Math.min(100, h_val));
+                g_val = Math.max(0, Math.min(600, g_val));
+                ph_val = Math.max(0, Math.min(14, ph_val));
+
+                document.getElementById('slider-temp').value = t_val.toFixed(1);
+                document.getElementById('slider-hum').value = h_val.toFixed(1);
+                document.getElementById('slider-gas').value = g_val;
+                document.getElementById('slider-ph').value = ph_val.toFixed(1);
+
+                updateCalibration();
+                
+                // periodic console log
+                if (Math.round(autoSimTime * 10) % 20 === 0) {
+                    logConsole(`Auto-inference cycle running. Active Sensor ${activeSensorId} outputs refreshed.`);
+                }
+            }, 300);
         }
     }
 
@@ -844,10 +1217,10 @@
         let count = 0;
         const scanInt = setInterval(() => {
             count++;
-            if (count === 1) logConsole(`Pinging Node Group A channel 1-12...`);
-            if (count === 2) logConsole(`Pinging Node Group B channel 1-12...`);
+            if (count === 1) logConsole(`Pinging Sensor 1 (SENS-DG-01)...`);
+            if (count === 2) logConsole(`Pinging Sensor 2 (SENS-SY-02)...`);
             if (count === 3) {
-                logConsole(`Scan complete. 4 nodes active. 1 offline. 19 empty slots.`);
+                logConsole(`Scan complete. 2 physical sensors active in dual ML inference mode.`);
                 clearInterval(scanInt);
                 alert('Jaringan sensor berhasil dipindai!');
             }
@@ -859,27 +1232,29 @@
         document.getElementById('elapsed-timer').textContent = "00:00:00";
         document.getElementById('history-log-box').innerHTML = `<div>[${new Date().toLocaleTimeString()}] Simulation parameters reset successfully.</div>`;
         
-        sensorNodesData['1A'].status = 'safe';
-        sensorNodesData['1A'].safety = 'Aman (Terkontrol)';
-        sensorNodesData['1A'].temp = 4.2;
-        sensorNodesData['1A'].gas = 120;
-        sensorNodesData['1A'].ph = 6.2;
-        sensorNodesData['1A'].note = 'Suhu daging stabil di area dingin, tidak terdeteksi kontaminasi gas.';
+        sensors[1].temp = 4.2;
+        sensors[1].hum = 68.0;
+        sensors[1].gas = 120;
+        sensors[1].ph = 6.2;
 
-        const node1A = document.getElementById('node-1A');
-        node1A.className = "gui-node node-green blink-green";
-        document.getElementById('cam-box-danger').className = "camera-overlay-box text-green-500 border-green-500";
-        document.getElementById('cam-box-danger').textContent = "[A1] SAFE: RESTORED";
+        sensors[2].temp = 8.5;
+        sensors[2].hum = 75.0;
+        sensors[2].gas = 150;
+        sensors[2].ph = 6.8;
 
         document.getElementById('total-alerts-count').textContent = "0 LOGS";
 
-        logConsole(`Alert status cleared. Resetting Node 1A to OK.`);
-        selectNode('1A');
+        if (autoSimInterval) {
+            toggleAutoSimulation();
+        }
+
+        changeActiveSensor(1);
+        logConsole(`Parameters reset. Models returned to normal safe state.`);
     }
 
-    // Initialize select state to node 1A on load
+    // Initialize select state to Sensor 1 on load
     window.addEventListener('DOMContentLoaded', () => {
-        selectNode('1A');
+        changeActiveSensor(1);
     });
 
     // -----------------------------------------------------------------

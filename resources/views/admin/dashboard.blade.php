@@ -613,7 +613,7 @@
                         <div class="flex items-center gap-2">
                             <span class="w-2 h-2 rounded-full @if($reading->sensorDevice?->status === 'active') bg-emerald-500 animate-pulse @else bg-gray-300 @endif"></span>
                             <span class="font-bold text-gray-900 font-mono text-xs tracking-wide bg-gray-55 px-2.5 py-1 rounded-md border border-gray-100">
-                                {{ $reading->sensorDevice->device_code ?? '-' }}
+                                {{ $reading->sensorDevice?->device_code ?? '-' }}
                             </span>
                         </div>
                     </td>

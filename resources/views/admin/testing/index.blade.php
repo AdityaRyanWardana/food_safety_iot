@@ -163,6 +163,24 @@
                     <span class="text-[10px] font-bold text-gray-400">pH</span>
                 </div>
             </div>
+
+            <!-- Live Status & Raw ADC Row (Premium Hardware Style) -->
+            <div class="mt-4 pt-4 border-t border-gray-150/70 grid grid-cols-2 gap-4">
+                <div class="bg-gray-50/50 rounded-xl px-4 py-2.5 flex items-center justify-between border border-gray-200/50 shadow-inner">
+                    <div class="flex items-center gap-2">
+                        <span class="text-[9px] font-extrabold text-gray-500 uppercase">Status Sensor:</span>
+                        <span id="liveStatusBadge" class="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-gray-400 text-white flex items-center gap-1 shadow-sm">
+                            <i class="fa-solid fa-circle-question"></i> MENUNGGU DATA
+                        </span>
+                    </div>
+                </div>
+                <div class="bg-gray-50/50 rounded-xl px-4 py-2.5 flex items-center justify-between border border-gray-200/50 shadow-inner">
+                    <div class="flex items-center gap-2">
+                        <span class="text-[9px] font-extrabold text-gray-500 uppercase">Raw ADC MQ135:</span>
+                        <span id="liveAdcValue" class="text-xs font-mono font-black text-gray-700">--</span>
+                    </div>
+                </div>
+            </div>
             
             <div class="mt-5">
                 <button id="btnSaveReading" onclick="saveCurrentReading()" disabled class="w-full bg-brandGreen text-white py-3 rounded-xl font-bold hover:bg-brandGreenHover hover:shadow-lg hover:shadow-brandGreen/25 transition duration-300 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2">
@@ -251,7 +269,7 @@
 
 <script>
 let port = null, reader = null, isConnected = false;
-let currentData = { temperature: null, humidity: null, gas_level: null, ph_level: null };
+let currentData = { temperature: null, humidity: null, gas_level: null, ph_level: null, safety_status: null, raw_adc: null };
 
 function log(msg, type = 'info') {
     const el = document.getElementById('serialLog');
@@ -259,6 +277,22 @@ function log(msg, type = 'info') {
     const time = new Date().toLocaleTimeString();
     el.innerHTML += `<p class="${colors[type] || colors.info}">[ ${time} ] ${msg}</p>`;
     el.scrollTop = el.scrollHeight;
+}
+
+function updateLiveStatusUI(status, label) {
+    const badge = document.getElementById('liveStatusBadge');
+    if (!badge) return;
+    
+    if (status === 'aman') {
+        badge.className = "text-[9px] font-black uppercase px-2 py-0.5 rounded bg-emerald-500 text-white flex items-center gap-1 shadow-sm animate-pulse";
+        badge.innerHTML = '<i class="fa-solid fa-circle-check"></i> ' + label.toUpperCase();
+    } else if (status === 'waspada') {
+        badge.className = "text-[9px] font-black uppercase px-2 py-0.5 rounded bg-amber-500 text-white flex items-center gap-1 shadow-sm animate-pulse";
+        badge.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> ' + label.toUpperCase();
+    } else if (status === 'bahaya') {
+        badge.className = "text-[9px] font-black uppercase px-2 py-0.5 rounded bg-red-500 text-white flex items-center gap-1 shadow-sm animate-pulse";
+        badge.innerHTML = '<i class="fa-solid fa-skull-crossbones"></i> ' + label.toUpperCase();
+    }
 }
 
 async function connectSerial() {
@@ -345,6 +379,33 @@ function parseAndDisplay(line) {
         if (colonIndex === -1) return;
         const key = p.substring(0, colonIndex).trim().toUpperCase();
         const val = p.substring(colonIndex + 1).trim();
+
+        // 1. Handle non-numeric "Status" from Arduino
+        if (key === 'STATUS') {
+            const statusUpper = val.toUpperCase();
+            if (statusUpper.includes('AMAN')) {
+                currentData.safety_status = 'aman';
+                updateLiveStatusUI('aman', 'Aman (Optimal)');
+            } else if (statusUpper.includes('KONTAMINASI') || statusUpper.includes('TERKONTAMINASI')) {
+                currentData.safety_status = 'waspada';
+                updateLiveStatusUI('waspada', 'Terkontaminasi');
+            } else if (statusUpper.includes('BAHAYA') || statusUpper.includes('BERBAHAYA')) {
+                currentData.safety_status = 'bahaya';
+                updateLiveStatusUI('bahaya', 'Berbahaya');
+            }
+            return;
+        }
+
+        // 2. Handle raw ADC value from Arduino
+        if (key.includes('ADC')) {
+            const rawAdc = parseInt(val);
+            if (!isNaN(rawAdc)) {
+                document.getElementById('liveAdcValue').textContent = rawAdc;
+                currentData.raw_adc = rawAdc;
+            }
+            return;
+        }
+
         const num = parseFloat(val);
         if (isNaN(num)) return;
 
@@ -400,7 +461,7 @@ async function saveCurrentReading() {
         sample_name: document.getElementById('sampleName').value,
         food_category_id: document.getElementById('foodCategory').value || null,
         sensor_device_id: document.getElementById('sensorDevice').value || null,
-        notes: document.getElementById('notes').value,
+        notes: (currentData.raw_adc ? `[Raw ADC MQ135: ${currentData.raw_adc}] ` : '') + document.getElementById('notes').value,
         ...currentData
     };
     try {

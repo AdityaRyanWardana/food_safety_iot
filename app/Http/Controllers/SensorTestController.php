@@ -31,15 +31,19 @@ class SensorTestController extends Controller
             'humidity' => 'nullable|numeric',
             'gas_level' => 'nullable|numeric',
             'ph_level' => 'nullable|numeric',
+            'safety_status' => 'nullable|string|in:aman,waspada,bahaya',
         ]);
 
-        // Determine safety status based on thresholds
-        $safetyStatus = $this->analyzeSafety(
-            $request->temperature,
-            $request->humidity,
-            $request->gas_level,
-            $request->ph_level
-        );
+        // Determine safety status based on request or thresholds
+        $safetyStatus = $request->safety_status;
+        if (!$safetyStatus) {
+            $safetyStatus = $this->analyzeSafety(
+                $request->temperature,
+                $request->humidity,
+                $request->gas_level,
+                $request->ph_level
+            );
+        }
 
         $isAnomaly = $safetyStatus !== 'aman';
 

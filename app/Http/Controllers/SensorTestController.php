@@ -93,28 +93,29 @@ class SensorTestController extends Controller
         $warningCount = 0;
 
         // Temperature analysis (food storage should be < 5°C or > 60°C for hot food)
+        // Adjusted to prevent false alarms in typical room temperatures (25-32°C)
         if ($temperature !== null) {
             if ($temperature > 40 || $temperature < -5) {
                 $dangerCount++;
-            } elseif ($temperature > 8 || $temperature < 0) {
+            } elseif ($temperature > 35 || $temperature < 0) {
                 $warningCount++;
             }
         }
 
-        // Humidity analysis (ideal: 30-60%)
+        // Humidity analysis (ideal: 30-70%)
         if ($humidity !== null) {
             if ($humidity > 85 || $humidity < 10) {
                 $dangerCount++;
-            } elseif ($humidity > 70 || $humidity < 20) {
+            } elseif ($humidity > 75 || $humidity < 20) {
                 $warningCount++;
             }
         }
 
-        // Gas level analysis (MQ sensor - high levels indicate decomposition)
+        // Gas level analysis (MQ sensor - max value from ESP32 is 60)
         if ($gasLevel !== null) {
-            if ($gasLevel > 400) {
+            if ($gasLevel > 25) {
                 $dangerCount++;
-            } elseif ($gasLevel > 200) {
+            } elseif ($gasLevel > 15) {
                 $warningCount++;
             }
         }
@@ -137,7 +138,7 @@ class SensorTestController extends Controller
 
     private function detectContaminationType($temperature, $gasLevel, $phLevel): string
     {
-        if ($gasLevel !== null && $gasLevel > 400) {
+        if ($gasLevel !== null && $gasLevel > 25) {
             return 'Dekomposisi Gas Tinggi';
         }
         if ($temperature !== null && $temperature > 40) {

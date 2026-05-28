@@ -342,9 +342,9 @@ function parseAndDisplay(line) {
                 const num = parseFloat(data[k]);
                 if (isNaN(num)) continue;
                 const key = k.trim().toUpperCase();
-                if (key.includes('TEMP') || key === 'T') { currentData.temperature = num; document.getElementById('liveTemp').textContent = num.toFixed(1); parsedAny = true; }
-                else if (key.includes('HUM') || key === 'H') { currentData.humidity = num; document.getElementById('liveHum').textContent = num.toFixed(1); parsedAny = true; }
-                else if (key.includes('GAS') || key === 'G') { currentData.gas_level = num; document.getElementById('liveGas').textContent = num.toFixed(0); parsedAny = true; }
+                if (key.includes('TEMP') || key === 'T') { currentData.temperature = num; document.getElementById('liveTemp').textContent = num.toFixed(2); parsedAny = true; }
+                else if (key.includes('HUM') || key === 'H') { currentData.humidity = num; document.getElementById('liveHum').textContent = num.toFixed(2); parsedAny = true; }
+                else if (key.includes('GAS') || key === 'G') { currentData.gas_level = num; document.getElementById('liveGas').textContent = num.toFixed(2); parsedAny = true; }
             }
             if (parsedAny) {
                 document.getElementById('btnSaveReading').disabled = false;
@@ -366,7 +366,7 @@ function parseAndDisplay(line) {
         const val = p.substring(colonIndex + 1).trim();
 
         // 1. Handle non-numeric "Status" from Arduino
-        if (key === 'STATUS') {
+        if (key.includes('STATUS')) {
             const statusUpper = val.toUpperCase();
             if (statusUpper.includes('AMAN')) {
                 currentData.safety_status = 'aman';
@@ -394,18 +394,18 @@ function parseAndDisplay(line) {
         const num = parseFloat(val);
         if (isNaN(num)) return;
 
-        if (key.includes('TEMP') || key === 'T') { currentData.temperature = num; document.getElementById('liveTemp').textContent = num.toFixed(1); parsedAny = true; }
-        else if (key.includes('HUM') || key === 'H') { currentData.humidity = num; document.getElementById('liveHum').textContent = num.toFixed(1); parsedAny = true; }
-        else if (key.includes('GAS') || key === 'G') { currentData.gas_level = num; document.getElementById('liveGas').textContent = num.toFixed(0); parsedAny = true; }
+        if (key.includes('TEMP') || key === 'T' || key.includes('SUHU')) { currentData.temperature = num; document.getElementById('liveTemp').textContent = num.toFixed(2); parsedAny = true; }
+        else if (key.includes('HUM') || key === 'H' || key.includes('LEMBAB')) { currentData.humidity = num; document.getElementById('liveHum').textContent = num.toFixed(2); parsedAny = true; }
+        else if (key.includes('GAS') || key === 'G') { currentData.gas_level = num; document.getElementById('liveGas').textContent = num.toFixed(2); parsedAny = true; }
     });
 
     // Cara 3: Deteksi raw data angka saja (e.g. "25.5, 60.1, 120, 6.8")
     if (!parsedAny) {
         const numbers = line.split(/[,\s\t]+/).map(parseFloat).filter(n => !isNaN(n));
         if (numbers.length >= 3) {
-            currentData.temperature = numbers[0]; document.getElementById('liveTemp').textContent = numbers[0].toFixed(1);
-            currentData.humidity = numbers[1]; document.getElementById('liveHum').textContent = numbers[1].toFixed(1);
-            currentData.gas_level = numbers[2]; document.getElementById('liveGas').textContent = numbers[2].toFixed(0);
+            currentData.temperature = numbers[0]; document.getElementById('liveTemp').textContent = numbers[0].toFixed(2);
+            currentData.humidity = numbers[1]; document.getElementById('liveHum').textContent = numbers[1].toFixed(2);
+            currentData.gas_level = numbers[2]; document.getElementById('liveGas').textContent = numbers[2].toFixed(2);
             parsedAny = true;
         }
     }

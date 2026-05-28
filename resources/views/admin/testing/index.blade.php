@@ -130,7 +130,7 @@
                 Telemetri Sensor Real-Time
             </h3>
             
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                 <!-- Temp Gauge -->
                 <div class="relative overflow-hidden p-4 rounded-2xl bg-gradient-to-b from-green-50/20 to-white border border-green-100/50 text-center">
                     <i class="fa-solid fa-temperature-half text-3xl text-brandGreen mb-2.5"></i>
@@ -155,13 +155,6 @@
                     <span class="text-[10px] font-bold text-gray-400">ppm</span>
                 </div>
                 
-                <!-- pH Gauge -->
-                <div class="relative overflow-hidden p-4 rounded-2xl bg-gradient-to-b from-teal-50/50 to-white border border-teal-100/50 text-center">
-                    <i class="fa-solid fa-vial text-3xl text-teal-500 mb-2.5"></i>
-                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">pH Level</p>
-                    <p id="livePh" class="text-3xl font-black text-gray-900 mt-1">--</p>
-                    <span class="text-[10px] font-bold text-gray-400">pH</span>
-                </div>
             </div>
 
             <!-- Live Status & Raw ADC Row (Premium Hardware Style) -->
@@ -199,7 +192,7 @@
                         <p id="resultMsg" class="text-xs mt-1 text-gray-500"></p>
                     </div>
                 </div>
-                <div id="resultDetails" class="grid grid-cols-4 gap-3 mt-4 pt-4 border-t border-gray-200/50"></div>
+                <div id="resultDetails" class="grid grid-cols-3 gap-3 mt-4 pt-4 border-t border-gray-200/50"></div>
             </div>
         </div>
 
@@ -231,7 +224,7 @@
                             <th class="px-6 py-3 font-bold">Sampel</th>
                             <th class="px-6 py-3 font-bold">Suhu</th>
                             <th class="px-6 py-3 font-bold">Gas</th>
-                            <th class="px-6 py-3 font-bold text-center">pH</th>
+
                             <th class="px-6 py-3 font-bold text-right">Status Keamanan</th>
                         </tr>
                     </thead>
@@ -242,13 +235,6 @@
                             <td class="px-6 py-3 font-bold text-gray-800">{{ $r->sample_name ?? '-' }}</td>
                             <td class="px-6 py-3 font-semibold">{{ $r->temperature }}°C</td>
                             <td class="px-6 py-3 font-semibold">{{ $r->gas_level }} ppm</td>
-                            <td class="px-6 py-3 text-center">
-                                @if(isset($r->ph_level))
-                                <span class="px-2 py-0.5 rounded-full bg-teal-50 text-teal-600 text-xs font-bold border border-teal-100/50">{{ $r->ph_level }}</span>
-                                @else
-                                <span class="text-gray-400">-</span>
-                                @endif
-                            </td>
                             <td class="px-6 py-3 text-right">
                                 <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold border shadow-sm
                                     @if($r->safety_status==='aman') bg-green-50 text-emerald-700 border-green-200/60
@@ -269,7 +255,7 @@
 
 <script>
 let port = null, reader = null, isConnected = false;
-let currentData = { temperature: null, humidity: null, gas_level: null, ph_level: null, safety_status: null, raw_adc: null };
+let currentData = { temperature: null, humidity: null, gas_level: null, safety_status: null, raw_adc: null };
 
 function log(msg, type = 'info') {
     const el = document.getElementById('serialLog');
@@ -359,7 +345,6 @@ function parseAndDisplay(line) {
                 if (key.includes('TEMP') || key === 'T') { currentData.temperature = num; document.getElementById('liveTemp').textContent = num.toFixed(1); parsedAny = true; }
                 else if (key.includes('HUM') || key === 'H') { currentData.humidity = num; document.getElementById('liveHum').textContent = num.toFixed(1); parsedAny = true; }
                 else if (key.includes('GAS') || key === 'G') { currentData.gas_level = num; document.getElementById('liveGas').textContent = num.toFixed(0); parsedAny = true; }
-                else if (key.includes('PH') || key === 'P') { currentData.ph_level = num; document.getElementById('livePh').textContent = num.toFixed(1); parsedAny = true; }
             }
             if (parsedAny) {
                 document.getElementById('btnSaveReading').disabled = false;
@@ -412,7 +397,6 @@ function parseAndDisplay(line) {
         if (key.includes('TEMP') || key === 'T') { currentData.temperature = num; document.getElementById('liveTemp').textContent = num.toFixed(1); parsedAny = true; }
         else if (key.includes('HUM') || key === 'H') { currentData.humidity = num; document.getElementById('liveHum').textContent = num.toFixed(1); parsedAny = true; }
         else if (key.includes('GAS') || key === 'G') { currentData.gas_level = num; document.getElementById('liveGas').textContent = num.toFixed(0); parsedAny = true; }
-        else if (key.includes('PH') || key === 'P') { currentData.ph_level = num; document.getElementById('livePh').textContent = num.toFixed(1); parsedAny = true; }
     });
 
     // Cara 3: Deteksi raw data angka saja (e.g. "25.5, 60.1, 120, 6.8")
@@ -422,9 +406,6 @@ function parseAndDisplay(line) {
             currentData.temperature = numbers[0]; document.getElementById('liveTemp').textContent = numbers[0].toFixed(1);
             currentData.humidity = numbers[1]; document.getElementById('liveHum').textContent = numbers[1].toFixed(1);
             currentData.gas_level = numbers[2]; document.getElementById('liveGas').textContent = numbers[2].toFixed(0);
-            if (numbers[3] !== undefined) {
-                currentData.ph_level = numbers[3]; document.getElementById('livePh').textContent = numbers[3].toFixed(1);
-            }
             parsedAny = true;
         }
     }
@@ -447,11 +428,9 @@ function submitManualReading() {
     currentData.temperature = parseFloat(document.getElementById('manualTemp').value) || null;
     currentData.humidity = parseFloat(document.getElementById('manualHum').value) || null;
     currentData.gas_level = parseFloat(document.getElementById('manualGas').value) || null;
-    currentData.ph_level = null;
     document.getElementById('liveTemp').textContent = currentData.temperature?.toFixed(1) ?? '--';
     document.getElementById('liveHum').textContent = currentData.humidity?.toFixed(1) ?? '--';
     document.getElementById('liveGas').textContent = currentData.gas_level?.toFixed(0) ?? '--';
-    document.getElementById('livePh').textContent = '--';
     log(`📝 Input manual: T=${currentData.temperature}, H=${currentData.humidity}, G=${currentData.gas_level}`);
     saveCurrentReading();
 }
@@ -473,8 +452,51 @@ async function saveCurrentReading() {
         if (data.success) {
             log(`💾 Data tersimpan! Status: ${data.safety_status.toUpperCase()}`, data.is_anomaly ? 'warn' : 'info');
             showResult(data);
+            appendReadingToTable(data.reading, data.safety_status);
         }
     } catch (e) { log('❌ Gagal menyimpan: ' + e.message, 'error'); }
+}
+
+function appendReadingToTable(r, status) {
+    const tbody = document.getElementById('readingsBody');
+    const date = new Date();
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const mins = String(date.getMinutes()).padStart(2, '0');
+    const timeStr = `${day}/${month} ${hours}:${mins}`;
+
+    let badgeClass = 'bg-green-50 text-emerald-700 border-green-200/60';
+    let statusText = 'Aman';
+    
+    if (status === 'waspada') {
+        badgeClass = 'bg-yellow-50 text-yellow-700 border-yellow-200/60';
+        statusText = 'Waspada';
+    } else if (status === 'bahaya') {
+        badgeClass = 'bg-red-50 text-red-600 border-red-200/60';
+        statusText = 'Bahaya';
+    }
+
+    const tr = document.createElement('tr');
+    tr.className = 'hover:bg-gray-50/30 transition animate-pulse';
+    tr.innerHTML = `
+        <td class="px-6 py-3 text-xs text-gray-400">${timeStr}</td>
+        <td class="px-6 py-3 font-bold text-gray-800">${r.sample_name || '-'}</td>
+        <td class="px-6 py-3 font-semibold">${r.temperature || '--'}°C</td>
+        <td class="px-6 py-3 font-semibold">${r.gas_level || '--'} ppm</td>
+        <td class="px-6 py-3 text-right">
+            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold border shadow-sm ${badgeClass}">
+                ${statusText}
+            </span>
+        </td>
+    `;
+    
+    tbody.prepend(tr);
+    
+    // Matikan efek pulse setelah 2 detik
+    setTimeout(() => {
+        tr.classList.remove('animate-pulse');
+    }, 2000);
 }
 
 function showResult(data) {
@@ -507,8 +529,7 @@ function showResult(data) {
     document.getElementById('resultDetails').innerHTML = `
         <div class="bg-white/80 rounded-xl p-3 text-center border border-gray-150/45"><p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Suhu</p><p class="font-bold text-gray-800 mt-0.5">${r.temperature ?? '--'}°C</p></div>
         <div class="bg-white/80 rounded-xl p-3 text-center border border-gray-150/45"><p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Humidity</p><p class="font-bold text-gray-800 mt-0.5">${r.humidity ?? '--'}%</p></div>
-        <div class="bg-white/80 rounded-xl p-3 text-center border border-gray-150/45"><p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Gas</p><p class="font-bold text-gray-800 mt-0.5">${r.gas_level ?? '--'} ppm</p></div>
-        <div class="bg-white/80 rounded-xl p-3 text-center border border-gray-150/45"><p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">pH</p><p class="font-bold text-gray-800 mt-0.5">${r.ph_level ?? '--'}</p></div>`;
+        <div class="bg-white/80 rounded-xl p-3 text-center border border-gray-150/45"><p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Gas</p><p class="font-bold text-gray-800 mt-0.5">${r.gas_level ?? '--'} ppm</p></div>`;
 }
 </script>
 @endsection

@@ -112,10 +112,11 @@ class SensorTestController extends Controller
         }
 
         // Gas level analysis (MQ sensor - max value from ESP32 is 60)
+        // Adjusted to match Arduino code exactly (>= 20 Bahaya, >= 10 Terkontaminasi)
         if ($gasLevel !== null) {
-            if ($gasLevel > 25) {
+            if ($gasLevel >= 20) {
                 $dangerCount++;
-            } elseif ($gasLevel > 15) {
+            } elseif ($gasLevel >= 10) {
                 $warningCount++;
             }
         }
@@ -138,7 +139,7 @@ class SensorTestController extends Controller
 
     private function detectContaminationType($temperature, $gasLevel, $phLevel): string
     {
-        if ($gasLevel !== null && $gasLevel > 25) {
+        if ($gasLevel !== null && $gasLevel >= 20) {
             return 'Dekomposisi Gas Tinggi';
         }
         if ($temperature !== null && $temperature > 40) {

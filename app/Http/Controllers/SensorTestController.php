@@ -30,7 +30,6 @@ class SensorTestController extends Controller
             'temperature' => 'nullable|numeric',
             'humidity' => 'nullable|numeric',
             'gas_level' => 'nullable|numeric',
-            'ph_level' => 'nullable|numeric',
             'safety_status' => 'nullable|string|in:aman,waspada,bahaya',
         ]);
 
@@ -40,8 +39,7 @@ class SensorTestController extends Controller
             $safetyStatus = $this->analyzeSafety(
                 $request->temperature,
                 $request->humidity,
-                $request->gas_level,
-                $request->ph_level
+                $request->gas_level
             );
         }
 
@@ -54,7 +52,6 @@ class SensorTestController extends Controller
             'temperature' => $request->temperature,
             'humidity' => $request->humidity,
             'gas_level' => $request->gas_level,
-            'ph_level' => $request->ph_level,
             'is_anomaly' => $isAnomaly,
             'safety_status' => $safetyStatus,
             'notes' => $request->notes,
@@ -63,14 +60,14 @@ class SensorTestController extends Controller
 
         // If anomaly detected, create contamination log
         if ($isAnomaly) {
-            $type = $this->detectContaminationType($request->temperature, $request->gas_level, $request->ph_level);
+            $type = $this->detectContaminationType($request->temperature, $request->gas_level);
             ContaminationLog::create([
                 'sensor_reading_id' => $reading->id,
                 'sensor_device_id' => $request->sensor_device_id,
                 'food_category_id' => $request->food_category_id,
                 'type' => $type,
                 'severity' => $safetyStatus === 'bahaya' ? 'kritis' : 'sedang',
-                'description' => "Anomali terdeteksi pada sampel: {$request->sample_name}. Suhu: {$request->temperature}°C, Gas: {$request->gas_level} ppm, pH: {$request->ph_level}",
+                'description' => "Anomali terdeteksi pada sampel: {$request->sample_name}. Suhu: {$request->temperature}°C, Gas: {$request->gas_level} ppm",
                 'status' => 'terdeteksi',
                 'detected_at' => now(),
             ]);
@@ -87,7 +84,7 @@ class SensorTestController extends Controller
         ]);
     }
 
-    private function analyzeSafety($temperature, $humidity, $gasLevel, $phLevel): string
+    private function analyzeSafety($temperature, $humidity, $gasLevel): string
     {
         $dangerCount = 0;
         $warningCount = 0;
@@ -121,15 +118,6 @@ class SensorTestController extends Controller
             }
         }
 
-        // pH analysis (ideal food pH: 4.0-7.0)
-        if ($phLevel !== null) {
-            if ($phLevel > 9 || $phLevel < 2) {
-                $dangerCount++;
-            } elseif ($phLevel > 7.5 || $phLevel < 3.5) {
-                $warningCount++;
-            }
-        }
-
         if ($dangerCount >= 1) return 'bahaya';
         if ($warningCount >= 2) return 'waspada';
         if ($warningCount >= 1) return 'waspada';
@@ -137,16 +125,13 @@ class SensorTestController extends Controller
         return 'aman';
     }
 
-    private function detectContaminationType($temperature, $gasLevel, $phLevel): string
+    private function detectContaminationType($temperature, $gasLevel): string
     {
         if ($gasLevel !== null && $gasLevel >= 20) {
             return 'Dekomposisi Gas Tinggi';
         }
         if ($temperature !== null && $temperature > 40) {
             return 'Anomali Suhu Tinggi';
-        }
-        if ($phLevel !== null && ($phLevel > 9 || $phLevel < 2)) {
-            return 'Anomali pH Ekstrem';
         }
         return 'Anomali Multi-Sensor';
     }

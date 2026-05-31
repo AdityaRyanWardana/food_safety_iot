@@ -16,7 +16,6 @@ return new class extends Migration
             $table->decimal('temperature', 8, 2)->nullable();
             $table->decimal('humidity', 8, 2)->nullable();
             $table->decimal('gas_level', 8, 2)->nullable();
-            $table->decimal('ph_level', 8, 2)->nullable();
             $table->boolean('is_anomaly')->default(false);
             $table->enum('safety_status', ['aman', 'waspada', 'bahaya'])->default('aman');
             $table->text('notes')->nullable();

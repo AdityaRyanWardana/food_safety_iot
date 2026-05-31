@@ -10,7 +10,7 @@ class SensorReading extends Model
 {
     protected $fillable = [
         'sensor_device_id', 'food_category_id', 'sample_name',
-        'temperature', 'humidity', 'gas_level', 'ph_level',
+        'temperature', 'humidity', 'gas_level',
         'is_anomaly', 'safety_status', 'notes', 'read_at',
     ];
 
@@ -18,7 +18,6 @@ class SensorReading extends Model
         'temperature' => 'decimal:2',
         'humidity' => 'decimal:2',
         'gas_level' => 'decimal:2',
-        'ph_level' => 'decimal:2',
         'is_anomaly' => 'boolean',
         'read_at' => 'datetime',
     ];

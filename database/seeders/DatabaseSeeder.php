@@ -106,7 +106,6 @@ class DatabaseSeeder extends Seeder
             'temperature' => 4.20,
             'humidity' => 68.00,
             'gas_level' => 120.00,
-            'ph_level' => 6.20,
             'is_anomaly' => false,
             'safety_status' => 'aman',
             'notes' => 'Suhu stabil di area dingin, tidak terdeteksi kontaminasi gas pembusukan.',
@@ -123,7 +122,6 @@ class DatabaseSeeder extends Seeder
             'temperature' => 12.50, // Agak hangat untuk chiller sayur
             'humidity' => 78.00,
             'gas_level' => 220.00, // Diatas batas waspada 200
-            'ph_level' => 6.80,
             'is_anomaly' => true,
             'safety_status' => 'waspada',
             'notes' => 'Suhu chiller agak meningkat, kelembapan cukup tinggi, indikasi awal pembusukan daun sayur.',
@@ -151,7 +149,6 @@ class DatabaseSeeder extends Seeder
             'temperature' => 18.20, // Sangat hangat (danger zone)
             'humidity' => 86.00, // Kelembapan sangat tinggi
             'gas_level' => 450.00, // Diatas batas bahaya 400
-            'ph_level' => 4.80, // pH tidak seimbang
             'is_anomaly' => true,
             'safety_status' => 'bahaya',
             'notes' => 'Deteksi bau gas amonia/pembusukan tinggi pada sampel daging cincang.',

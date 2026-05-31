@@ -214,14 +214,6 @@
                             </div>
                             <input type="range" id="slider-gas" min="0" max="600" step="5" value="450" oninput="updateCalibration()" class="w-full h-2 bg-blue-100 rounded-lg appearance-none cursor-pointer accent-blue-600">
                         </div>
-
-                        <div>
-                            <div class="flex justify-between text-[10px] font-extrabold text-blue-950 uppercase mb-1">
-                                <span>pH level (<span id="slider-ph-val">4.8</span>)</span>
-                                <span class="text-gray-400 font-bold">Range: 0 to 14</span>
-                            </div>
-                            <input type="range" id="slider-ph" min="0" max="14" step="0.1" value="4.8" oninput="updateCalibration()" class="w-full h-2 bg-blue-100 rounded-lg appearance-none cursor-pointer accent-blue-600">
-                        </div>
                     </div>
                 </div>
 
@@ -455,7 +447,7 @@
                     </div>
                     <div>
                         <label class="text-[9px] font-extrabold text-blue-900 uppercase">Data Current / Metrics</label>
-                        <input type="text" id="info-sensor-metrics" value="Temp: 18.2°C | Hum: 86% | Gas: 450 ppm | pH: 4.8" class="w-full px-3 py-2 text-xs font-bold text-red-500 gui-input" readonly>
+                        <input type="text" id="info-sensor-metrics" value="Temp: 18.2°C | Hum: 86% | Gas: 450 ppm" class="w-full px-3 py-2 text-xs font-bold text-red-500 gui-input" readonly>
                     </div>
                 </div>
             </div>
@@ -657,16 +649,6 @@
                                 <i class="fa-solid fa-smog mr-1.5 text-amber-400"></i>{{ number_format($reading->gas_level, 0) }} ppm
                             </span>
                             @endif
-
-                            @if(isset($reading->ph_level))
-                            <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-teal-50/80 text-teal-700 text-xs font-bold border border-teal-100/50">
-                                <i class="fa-solid fa-vial mr-1.5 text-teal-400"></i>pH {{ number_format($reading->ph_level, 1) }}
-                            </span>
-                            @else
-                            <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-gray-55 text-gray-400 text-xs font-bold border border-gray-100" title="pH tidak terukur">
-                                <i class="fa-solid fa-vial-slash mr-1.5"></i>pH -
-                            </span>
-                            @endif
                         </div>
                     </td>
                     
@@ -749,7 +731,6 @@
             temp: 18.2,
             hum: 86.0,
             gas: 450,
-            ph: 4.8,
             note: 'Tingkat kontaminasi gas amonia tinggi pada daging cincang.'
         },
         2: {
@@ -759,21 +740,20 @@
             temp: 12.5,
             hum: 78.0,
             gas: 220,
-            ph: 6.8,
             note: 'Suhu chiller agak hangat, indikasi awal pembusukan daun sayur.'
         }
     };
 
     const knnTrainingSet = [
-        { name: 'S1', T: 4.2, H: 68.0, G: 120, pH: 6.2, label: 'aman', x_plot: 25, y_plot: 75 },
-        { name: 'S2', T: 3.5, H: 65.0, G: 100, pH: 6.5, label: 'aman', x_plot: 30, y_plot: 85 },
-        { name: 'S3', T: 5.0, H: 62.0, G: 90, pH: 6.0, label: 'aman', x_plot: 20, y_plot: 65 },
-        { name: 'W1', T: 12.5, H: 78.0, G: 220, pH: 6.8, label: 'waspada', x_plot: 55, y_plot: 40 },
-        { name: 'W2', T: 10.0, H: 74.0, G: 210, pH: 6.5, label: 'waspada', x_plot: 60, y_plot: 50 },
-        { name: 'W3', T: 11.5, H: 80.0, G: 190, pH: 7.2, label: 'waspada', x_plot: 45, y_plot: 35 },
-        { name: 'D1', T: 18.2, H: 86.0, G: 450, pH: 4.8, label: 'bahaya', x_plot: 75, y_plot: 15 },
-        { name: 'D2', T: 22.0, H: 88.0, G: 480, pH: 4.5, label: 'bahaya', x_plot: 85, y_plot: 25 },
-        { name: 'D3', T: 35.0, H: 92.0, G: 510, pH: 5.0, label: 'bahaya', x_plot: 68, y_plot: 10 }
+        { name: 'S1', T: 4.2, H: 68.0, G: 120, label: 'aman', x_plot: 25, y_plot: 75 },
+        { name: 'S2', T: 3.5, H: 65.0, G: 100, label: 'aman', x_plot: 30, y_plot: 85 },
+        { name: 'S3', T: 5.0, H: 62.0, G: 90, label: 'aman', x_plot: 20, y_plot: 65 },
+        { name: 'W1', T: 12.5, H: 78.0, G: 220, label: 'waspada', x_plot: 55, y_plot: 40 },
+        { name: 'W2', T: 10.0, H: 74.0, G: 210, label: 'waspada', x_plot: 60, y_plot: 50 },
+        { name: 'W3', T: 11.5, H: 80.0, G: 190, label: 'waspada', x_plot: 45, y_plot: 35 },
+        { name: 'D1', T: 18.2, H: 86.0, G: 450, label: 'bahaya', x_plot: 75, y_plot: 15 },
+        { name: 'D2', T: 22.0, H: 88.0, G: 480, label: 'bahaya', x_plot: 85, y_plot: 25 },
+        { name: 'D3', T: 35.0, H: 92.0, G: 510, label: 'bahaya', x_plot: 68, y_plot: 10 }
     ];
 
     let activeSensorId = 1;
@@ -812,7 +792,6 @@
         document.getElementById('slider-temp').value = sensor.temp;
         document.getElementById('slider-hum').value = sensor.hum;
         document.getElementById('slider-gas').value = sensor.gas;
-        document.getElementById('slider-ph').value = sensor.ph;
 
         updateCalibrationValues();
         updateCalibration();
@@ -823,7 +802,6 @@
         document.getElementById('slider-temp-val').textContent = parseFloat(document.getElementById('slider-temp').value).toFixed(1);
         document.getElementById('slider-hum-val').textContent = parseFloat(document.getElementById('slider-hum').value).toFixed(1);
         document.getElementById('slider-gas-val').textContent = parseInt(document.getElementById('slider-gas').value);
-        document.getElementById('slider-ph-val').textContent = parseFloat(document.getElementById('slider-ph').value).toFixed(1);
     }
 
     function normalize(val, min, max) {
@@ -839,21 +817,19 @@
         const temp = parseFloat(document.getElementById('slider-temp').value);
         const hum = parseFloat(document.getElementById('slider-hum').value);
         const gas = parseInt(document.getElementById('slider-gas').value);
-        const ph = parseFloat(document.getElementById('slider-ph').value);
 
         // Update active sensor data
         sensors[activeSensorId].temp = temp;
         sensors[activeSensorId].hum = hum;
         sensors[activeSensorId].gas = gas;
-        sensors[activeSensorId].ph = ph;
 
         // Update live metrics labels
         document.getElementById('label-sensor1-val').textContent = `${sensors[1].temp.toFixed(1)}°C | ${sensors[1].hum.toFixed(0)}% | ${sensors[1].gas}ppm`;
         document.getElementById('label-sensor2-val').textContent = `${sensors[2].temp.toFixed(1)}°C | ${sensors[2].hum.toFixed(0)}% | ${sensors[2].gas}ppm`;
 
         // Style the labels based on safety status
-        const sens1Safety = getQuickSafetyLabel(sensors[1].temp, sensors[1].hum, sensors[1].gas, sensors[1].ph);
-        const sens2Safety = getQuickSafetyLabel(sensors[2].temp, sensors[2].hum, sensors[2].gas, sensors[2].ph);
+        const sens1Safety = getQuickSafetyLabel(sensors[1].temp, sensors[1].hum, sensors[1].gas);
+        const sens2Safety = getQuickSafetyLabel(sensors[2].temp, sensors[2].hum, sensors[2].gas);
 
         document.getElementById('label-sensor1-val').className = `font-bold text-[10px] ${sens1Safety === 'bahaya' ? 'text-red-500 animate-pulse' : sens1Safety === 'waspada' ? 'text-yellow-600' : 'text-emerald-600'}`;
         document.getElementById('label-sensor2-val').className = `font-bold text-[10px] ${sens2Safety === 'bahaya' ? 'text-red-500 animate-pulse' : sens2Safety === 'waspada' ? 'text-yellow-600' : 'text-emerald-600'}`;
@@ -870,9 +846,6 @@
 
         if (gas > 400) dangerScore += 3.0;
         else if (gas > 200) warningScore += 1.5;
-
-        if (ph > 9 || ph < 2) dangerScore += 2.0;
-        else if (ph > 7.5 || ph < 3.5) warningScore += 1.0;
 
         const logitDanger = 2.5 * dangerScore - 1.5;
         const logitWarning = 1.8 * warningScore - 0.5;
@@ -930,19 +903,16 @@
         const t_norm = normalize(temp, -10, 50);
         const h_norm = normalize(hum, 0, 100);
         const g_norm = normalize(gas, 0, 600);
-        const ph_norm = normalize(ph, 0, 14);
 
         const distances = knnTrainingSet.map(item => {
             const item_t = normalize(item.T, -10, 50);
             const item_h = normalize(item.H, 0, 100);
             const item_g = normalize(item.G, 0, 600);
-            const item_ph = normalize(item.pH, 0, 14);
 
             const dist = Math.sqrt(
                 Math.pow(t_norm - item_t, 2) +
                 Math.pow(h_norm - item_h, 2) +
-                Math.pow(g_norm - item_g, 2) +
-                Math.pow(ph_norm - item_ph, 2)
+                Math.pow(g_norm - item_g, 2)
             );
             return { item, dist };
         });
@@ -979,7 +949,7 @@
 
         // Project dynamic query point in 2D plot space
         const x_plot = 15 + 70 * (t_norm * 0.5 + h_norm * 0.5);
-        const y_plot = 15 + 70 * (1.0 - (g_norm * 0.6 + ph_norm * 0.4)); // high gas / pH anomalies go upper
+        const y_plot = 15 + 70 * (1.0 - g_norm); // high gas anomalies go upper
 
         const querySolid = document.getElementById('knn-query-point-solid');
         const queryPing = document.getElementById('knn-query-point');
@@ -1026,7 +996,7 @@
         document.getElementById('info-sensor-location').value = currentActive.location;
 
         const metricsInput = document.getElementById('info-sensor-metrics');
-        metricsInput.value = `Temp: ${temp.toFixed(1)}°C | Hum: ${hum.toFixed(0)}% | Gas: ${gas} ppm | pH: ${ph.toFixed(1)}`;
+        metricsInput.value = `Temp: ${temp.toFixed(1)}°C | Hum: ${hum.toFixed(0)}% | Gas: ${gas} ppm`;
         
         const finalClass = mlpClass; // consensus default to MLP
         if (finalClass === 'bahaya') {
@@ -1040,7 +1010,7 @@
         // Barcode Specs panel details
         const statusColor = finalClass === 'aman' ? 'text-green-600' : finalClass === 'waspada' ? 'text-yellow-500' : 'text-red-500';
         const safetyStatusText = finalClass === 'aman' ? 'AMAN (Optimal)' : finalClass === 'waspada' ? 'WASPADA (Anomali)' : 'BAHAYA (KONTAMINASI)';
-        const diagNote = finalClass === 'bahaya' ? 'Kadar kontaminasi gas dan pH kritis. Disarankan pengujian laboratorium lanjutan.' : finalClass === 'waspada' ? 'Suhu / Kelembaban di luar batas normal. Periksa sistem chiller.' : 'Metrik sensor dalam batas aman optimal.';
+        const diagNote = finalClass === 'bahaya' ? 'Kadar kontaminasi gas kritis. Disarankan pengujian laboratorium lanjutan.' : finalClass === 'waspada' ? 'Suhu / Kelembaban di luar batas normal. Periksa sistem chiller.' : 'Metrik sensor dalam batas aman optimal.';
         
         document.getElementById('info-barcode-details').innerHTML = `
             <b>Sensor Code:</b> ${currentActive.code}<br>
@@ -1052,7 +1022,7 @@
         `;
     }
 
-    function getQuickSafetyLabel(t, h, g, ph) {
+    function getQuickSafetyLabel(t, h, g) {
         let dangerCount = 0;
         let warningCount = 0;
 
@@ -1064,9 +1034,6 @@
 
         if (g > 400) dangerCount++;
         else if (g > 200) warningCount++;
-
-        if (ph > 9 || ph < 2) dangerCount++;
-        else if (ph > 7.5 || ph < 3.5) warningCount++;
 
         if (dangerCount >= 1) return 'bahaya';
         if (warningCount >= 1) return 'waspada';
@@ -1162,30 +1129,26 @@
                 autoSimTime += 0.15;
                 
                 // Oscillate sliders based on sine waves to demonstrate dynamic ML outputs
-                let t_val, h_val, g_val, ph_val;
+                let t_val, h_val, g_val;
                 
                 if (activeSensorId === 1) {
                     t_val = 18.2 + 15.0 * Math.sin(autoSimTime);
                     h_val = 65.0 + 20.0 * Math.sin(autoSimTime * 1.2);
                     g_val = Math.round(280 + 220 * Math.sin(autoSimTime * 0.8));
-                    ph_val = 5.5 + 2.0 * Math.cos(autoSimTime * 0.9);
                 } else {
                     t_val = 8.5 + 8.0 * Math.sin(autoSimTime);
                     h_val = 75.0 + 15.0 * Math.cos(autoSimTime * 0.7);
                     g_val = Math.round(180 + 150 * Math.sin(autoSimTime * 1.1));
-                    ph_val = 6.8 + 1.2 * Math.sin(autoSimTime * 1.3);
                 }
 
                 // Constraints to range limits
                 t_val = Math.max(-10, Math.min(50, t_val));
                 h_val = Math.max(0, Math.min(100, h_val));
                 g_val = Math.max(0, Math.min(600, g_val));
-                ph_val = Math.max(0, Math.min(14, ph_val));
 
                 document.getElementById('slider-temp').value = t_val.toFixed(1);
                 document.getElementById('slider-hum').value = h_val.toFixed(1);
                 document.getElementById('slider-gas').value = g_val;
-                document.getElementById('slider-ph').value = ph_val.toFixed(1);
 
                 updateCalibration();
                 
@@ -1235,12 +1198,10 @@
         sensors[1].temp = 4.2;
         sensors[1].hum = 68.0;
         sensors[1].gas = 120;
-        sensors[1].ph = 6.2;
 
         sensors[2].temp = 8.5;
         sensors[2].hum = 75.0;
         sensors[2].gas = 150;
-        sensors[2].ph = 6.8;
 
         document.getElementById('total-alerts-count').textContent = "0 LOGS";
 

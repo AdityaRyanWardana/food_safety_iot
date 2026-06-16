@@ -98,6 +98,7 @@ class DatabaseSeeder extends Seeder
         }
 
         // 4. Seed Sensor Readings & Contamination Logs
+        /*
         // Reading 1: Aman
         $reading1 = SensorReading::create([
             'sensor_device_id' => $deviceModels[0]->id,
@@ -167,5 +168,6 @@ class DatabaseSeeder extends Seeder
             'status' => 'terdeteksi',
             'detected_at' => $reading3->read_at,
         ]);
+        */
     }
 }

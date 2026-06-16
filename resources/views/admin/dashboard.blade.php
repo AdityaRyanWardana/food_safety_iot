@@ -108,17 +108,6 @@
         border-color: #3B82F6;
         outline: none;
     }
-    
-    /* MLP & KNN cluster visualizer styling */
-    .knn-connection-line {
-        stroke-dasharray: 4,4;
-        animation: dash 1s linear infinite;
-    }
-    @keyframes dash {
-        to {
-            stroke-dashoffset: -20;
-        }
-    }
 </style>
 
 <div class="mb-6">
@@ -153,11 +142,11 @@
             </div>
         </div>
         
-        <!-- ==================== MLP vs KNN COMPARISON ENGINE ==================== -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- ==================== LIVE CALIBRATION ENGINE ==================== -->
+        <div class="flex justify-center mb-6">
             
-            <!-- Left Panel: 2-Sensor Selection and Live Calibration Controls (5 cols) -->
-            <div class="lg:col-span-5 gui-box rounded-2xl p-5 flex flex-col justify-between">
+            <!-- Left Panel: 2-Sensor Selection and Live Calibration Controls -->
+            <div class="w-full max-w-2xl gui-box rounded-2xl p-5 flex flex-col justify-between">
                 <div>
                     <div class="flex items-center justify-between border-b-2 border-blue-100 pb-3 mb-4">
                         <h2 class="text-xs font-extrabold text-blue-950 tracking-wide uppercase flex items-center gap-2">
@@ -227,188 +216,6 @@
                         <div class="bg-white border border-blue-250 rounded-lg p-2.5">
                             <span class="block text-[8px] text-gray-400 mb-0.5">SENS-SY-02 (Veg)</span>
                             <span id="label-sensor2-val" class="font-bold text-[10px] text-yellow-600">12.5°C | 78% | 220ppm</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Right Panel: MLP vs KNN Intelligent Inference & Visualization Engine (7 cols) -->
-            <div class="lg:col-span-7 gui-box rounded-2xl p-5 flex flex-col justify-between">
-                <div>
-                    <div class="flex items-center justify-between border-b-2 border-blue-100 pb-3 mb-4">
-                        <h2 class="text-xs font-extrabold text-blue-950 tracking-wide uppercase flex items-center gap-2">
-                            <i class="fa-solid fa-brain text-blue-500"></i>
-                            MLP vs KNN Inference Engine
-                        </h2>
-                        <span class="flex items-center gap-1">
-                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                            <b class="text-[9px] text-emerald-600 uppercase tracking-widest font-black">ACTIVE ENGINE</b>
-                        </span>
-                    </div>
-
-                    <!-- Inner Grid: MLP vs KNN side-by-side -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        
-                        <!-- MLP Panel -->
-                        <div class="bg-white border border-blue-100/70 p-4 rounded-xl flex flex-col justify-between">
-                            <div>
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="text-xs font-black text-blue-950 tracking-wide">1. MLP Neural Net</span>
-                                    <span class="text-[9px] bg-indigo-50 text-indigo-650 font-bold px-1.5 py-0.5 rounded">Softmax</span>
-                                </div>
-                                <div class="text-[9px] text-gray-400 font-bold mb-3">Model Accuracy: 98.6%</div>
-
-                                <!-- Neural Net Visual Diagram (SVG) -->
-                                <div class="w-full h-[110px] bg-slate-950 rounded-lg flex items-center justify-center p-2 mb-3 relative overflow-hidden border border-slate-800">
-                                    <svg class="w-full h-full" viewBox="0 0 200 100">
-                                        <!-- Synapse connections -->
-                                        <!-- Inputs (x=20) to Hidden (x=100) -->
-                                        <line x1="20" y1="20" x2="100" y2="15" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
-                                        <line x1="20" y1="20" x2="100" y2="32" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
-                                        <line x1="20" y1="20" x2="100" y2="50" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
-                                        <line x1="20" y1="20" x2="100" y2="68" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
-                                        <line x1="20" y1="20" x2="100" y2="85" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
-                                        
-                                        <line x1="20" y1="40" x2="100" y2="15" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
-                                        <line x1="20" y1="40" x2="100" y2="32" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
-                                        <line x1="20" y1="40" x2="100" y2="50" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
-                                        <line x1="20" y1="40" x2="100" y2="68" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
-                                        <line x1="20" y1="40" x2="100" y2="85" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
-
-                                        <line x1="20" y1="60" x2="100" y2="15" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
-                                        <line x1="20" y1="60" x2="100" y2="32" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
-                                        <line x1="20" y1="60" x2="100" y2="50" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
-                                        <line x1="20" y1="60" x2="100" y2="68" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
-                                        <line x1="20" y1="60" x2="100" y2="85" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
-
-                                        <line x1="20" y1="80" x2="100" y2="15" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
-                                        <line x1="20" y1="80" x2="100" y2="32" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
-                                        <line x1="20" y1="80" x2="100" y2="50" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
-                                        <line x1="20" y1="80" x2="100" y2="68" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
-                                        <line x1="20" y1="80" x2="100" y2="85" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
-
-                                        <!-- Hidden (x=100) to Outputs (x=180) -->
-                                        <line x1="100" y1="15" x2="180" y2="25" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
-                                        <line x1="100" y1="32" x2="180" y2="25" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
-                                        <line x1="100" y1="50" x2="180" y2="25" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
-                                        <line x1="100" y1="68" x2="180" y2="25" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
-                                        <line x1="100" y1="85" x2="180" y2="25" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
-
-                                        <line x1="100" y1="15" x2="180" y2="50" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
-                                        <line x1="100" y1="32" x2="180" y2="50" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
-                                        <line x1="100" y1="50" x2="180" y2="50" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
-                                        <line x1="100" y1="68" x2="180" y2="50" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
-                                        <line x1="100" y1="85" x2="180" y2="50" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
-
-                                        <line x1="100" y1="15" x2="180" y2="75" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
-                                        <line x1="100" y1="32" x2="180" y2="75" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
-                                        <line x1="100" y1="50" x2="180" y2="75" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
-                                        <line x1="100" y1="68" x2="180" y2="75" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
-                                        <line x1="100" y1="85" x2="180" y2="75" stroke="rgba(99,102,241,0.2)" stroke-width="1.5" />
-
-                                        <!-- Nodes Drawing -->
-                                        <!-- Inputs -->
-                                        <circle cx="20" cy="20" r="4.5" fill="#3B82F6" id="mlp-node-i1" />
-                                        <circle cx="20" cy="40" r="4.5" fill="#3B82F6" id="mlp-node-i2" />
-                                        <circle cx="20" cy="60" r="4.5" fill="#3B82F6" id="mlp-node-i3" />
-                                        <circle cx="20" cy="80" r="4.5" fill="#3B82F6" id="mlp-node-i4" />
-
-                                        <!-- Hidden -->
-                                        <circle cx="100" cy="15" r="4" fill="#818CF8" class="animate-pulse" />
-                                        <circle cx="100" cy="32" r="4" fill="#818CF8" class="animate-pulse" />
-                                        <circle cx="100" cy="50" r="4" fill="#818CF8" class="animate-pulse" />
-                                        <circle cx="100" cy="68" r="4" fill="#818CF8" class="animate-pulse" />
-                                        <circle cx="100" cy="85" r="4" fill="#818CF8" class="animate-pulse" />
-
-                                        <!-- Outputs (Safe, Warn, Danger) -->
-                                        <circle cx="180" cy="25" r="5.5" fill="#10B981" id="mlp-node-o1" class="transition duration-300" />
-                                        <circle cx="180" cy="50" r="5.5" fill="#9CA3AF" id="mlp-node-o2" class="transition duration-300" />
-                                        <circle cx="180" cy="75" r="5.5" fill="#9CA3AF" id="mlp-node-o3" class="transition duration-300" />
-                                    </svg>
-                                    <div class="absolute right-2 bottom-1 flex flex-col gap-0.5 text-[7px] text-gray-500 font-mono">
-                                        <span class="text-[#10B981]">● Safe</span>
-                                        <span class="text-[#F59E0B]">● Warn</span>
-                                        <span class="text-[#EF4444]">● Danger</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex items-center justify-between text-[10px] font-bold">
-                                <span class="text-gray-400">Class Probability:</span>
-                                <span id="mlp-prob-val" class="font-mono text-red-500 bg-red-50 px-2 py-0.5 rounded border border-red-150">BAHAYA (94.2%)</span>
-                            </div>
-                        </div>
-
-                        <!-- KNN Panel -->
-                        <div class="bg-white border border-blue-100/70 p-4 rounded-xl flex flex-col justify-between">
-                            <div>
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="text-xs font-black text-blue-950 tracking-wide">2. KNN Classifier</span>
-                                    <div class="flex items-center gap-1">
-                                        <span class="text-[9px] font-black text-gray-550 uppercase">K =</span>
-                                        <select id="knn-k-select" onchange="updateCalibration()" class="px-1.5 py-0.5 text-[9px] font-black text-gray-800 bg-gray-50 border border-gray-250 rounded">
-                                            <option value="3" selected>3</option>
-                                            <option value="5">5</option>
-                                            <option value="7">7</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="text-[9px] text-gray-400 font-bold mb-3">Model Accuracy: 94.2%</div>
-
-                                <!-- Scatter Plot Neighbors Visualization -->
-                                <div class="w-full h-[110px] bg-slate-950 rounded-lg relative overflow-hidden border border-slate-800 p-2 mb-3 flex items-center justify-center">
-                                    <!-- High-tech Grid overlay -->
-                                    <div class="absolute inset-0 bg-[linear-gradient(rgba(18,24,38,0)_94%,rgba(59,130,246,0.15)_94%),linear-gradient(90deg,rgba(18,24,38,0)_94%,rgba(59,130,246,0.15)_94%)] bg-[size:10px_10px] pointer-events-none opacity-40"></div>
-                                    
-                                    <!-- Dynamic points container -->
-                                    <div class="relative w-full h-full" id="knn-cluster-plot">
-                                        <!-- Fixed sample clusters (Green, Yellow, Red) and glowing White Query Point -->
-                                        <!-- Green Cluster -->
-                                        <span class="absolute w-2 h-2 rounded-full bg-emerald-500 border border-white" style="top: 75%; left: 25%;" title="Sample safe"></span>
-                                        <span class="absolute w-2 h-2 rounded-full bg-emerald-500 border border-white" style="top: 85%; left: 30%;" title="Sample safe"></span>
-                                        <span class="absolute w-2 h-2 rounded-full bg-emerald-500 border border-white" style="top: 65%; left: 20%;" title="Sample safe"></span>
-                                        <!-- Yellow Cluster -->
-                                        <span class="absolute w-2 h-2 rounded-full bg-amber-500 border border-white" style="top: 40%; left: 55%;" title="Sample warning"></span>
-                                        <span class="absolute w-2 h-2 rounded-full bg-amber-500 border border-white" style="top: 50%; left: 60%;" title="Sample warning"></span>
-                                        <span class="absolute w-2 h-2 rounded-full bg-amber-500 border border-white" style="top: 35%; left: 45%;" title="Sample warning"></span>
-                                        <!-- Red Cluster -->
-                                        <span class="absolute w-2 h-2 rounded-full bg-red-500 border border-white animate-pulse" style="top: 15%; left: 75%;" title="Sample danger"></span>
-                                        <span class="absolute w-2 h-2 rounded-full bg-red-500 border border-white animate-pulse" style="top: 25%; left: 85%;" title="Sample danger"></span>
-                                        <span class="absolute w-2 h-2 rounded-full bg-red-500 border border-white animate-pulse" style="top: 10%; left: 68%;" title="Sample danger"></span>
-                                        
-                                        <!-- SVG Connections for dynamic lines -->
-                                        <svg class="absolute inset-0 w-full h-full pointer-events-none" id="knn-svg-connections"></svg>
-                                        
-                                        <!-- Dynamic Query Point -->
-                                        <div id="knn-query-point" class="absolute w-3 h-3 rounded-full bg-white border-2 border-indigo-500 shadow-[0_0_12px_#6366f1] transition-all duration-200 z-10 animate-ping" style="top: 15%; left: 75%;"></div>
-                                        <div id="knn-query-point-solid" class="absolute w-3 h-3 rounded-full bg-white border-2 border-indigo-500 shadow-[0_0_8px_#6366f1] transition-all duration-200 z-10" style="top: 15%; left: 75%;"></div>
-                                    </div>
-                                    <div class="absolute right-2 bottom-1 flex flex-col gap-0.5 text-[7px] text-gray-500 font-mono">
-                                        <span class="text-[#6366f1] font-bold">Query point (X)</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex items-center justify-between text-[10px] font-bold">
-                                <span class="text-gray-400">K-Nearest Neighbors:</span>
-                                <span id="knn-class-val" class="font-mono text-red-500 bg-red-50 px-2 py-0.5 rounded border border-red-150">BAHAYA (3/3 votes)</span>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-                
-                <!-- Bottom comparison metrics row -->
-                <div class="border-t border-blue-100 pt-3">
-                    <div class="bg-blue-50/50 border border-blue-100/50 rounded-xl px-4 py-2 flex items-center justify-between shadow-inner">
-                        <div class="flex items-center gap-2">
-                            <span class="text-[9px] font-extrabold text-blue-900 uppercase">Decision Consensus:</span>
-                            <span id="badge-consensus" class="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-emerald-500 text-white flex items-center gap-1 shadow-sm">
-                                <i class="fa-solid fa-circle-check"></i> Models Match
-                            </span>
-                        </div>
-                        <div class="flex items-center gap-4 text-[9px] font-extrabold text-blue-955 uppercase font-mono">
-                            <span>MLP Latency: <b class="text-indigo-600">1.2ms</b></span>
-                            <span class="text-gray-250">|</span>
-                            <span>KNN Latency: <b class="text-indigo-600">0.4ms</b></span>
                         </div>
                     </div>
                 </div>
@@ -744,72 +551,8 @@
         }
     };
 
-    const knnTrainingSet = [
-        { name: 'S1', T: 4.2, H: 68.0, G: 120, label: 'aman', x_plot: 25, y_plot: 75 },
-        { name: 'S2', T: 3.5, H: 65.0, G: 100, label: 'aman', x_plot: 30, y_plot: 85 },
-        { name: 'S3', T: 5.0, H: 62.0, G: 90, label: 'aman', x_plot: 20, y_plot: 65 },
-        { name: 'W1', T: 12.5, H: 78.0, G: 220, label: 'waspada', x_plot: 55, y_plot: 40 },
-        { name: 'W2', T: 10.0, H: 74.0, G: 210, label: 'waspada', x_plot: 60, y_plot: 50 },
-        { name: 'W3', T: 11.5, H: 80.0, G: 190, label: 'waspada', x_plot: 45, y_plot: 35 },
-        { name: 'D1', T: 18.2, H: 86.0, G: 450, label: 'bahaya', x_plot: 75, y_plot: 15 },
-        { name: 'D2', T: 22.0, H: 88.0, G: 480, label: 'bahaya', x_plot: 85, y_plot: 25 },
-        { name: 'D3', T: 35.0, H: 92.0, G: 510, label: 'bahaya', x_plot: 68, y_plot: 10 }
-    ];
-
-    let activeSensorId = 1;
-    let autoSimInterval = null;
-    let autoSimTime = 0;
-
-    function changeActiveSensor(sensorId) {
-        activeSensorId = sensorId;
-        
-        // Toggle active state classes on buttons
-        const btn1 = document.getElementById('btn-select-sensor1');
-        const btn2 = document.getElementById('btn-select-sensor2');
-        
-        if (sensorId === 1) {
-            btn1.className = "p-3 rounded-xl border-2 border-blue-500 bg-blue-50/50 flex flex-col items-center text-center transition duration-300";
-            btn1.querySelector('i').className = "fa-solid fa-microchip text-blue-500 text-base mb-1";
-            btn1.querySelector('span').className = "text-xs font-black text-blue-950";
-            
-            btn2.className = "p-3 rounded-xl border-2 border-white hover:border-blue-200 bg-white flex flex-col items-center text-center transition duration-300";
-            btn2.querySelector('i').className = "fa-solid fa-microchip text-gray-400 text-base mb-1";
-            btn2.querySelector('.text-xs').className = "text-xs font-bold text-gray-700";
-        } else {
-            btn2.className = "p-3 rounded-xl border-2 border-blue-500 bg-blue-50/50 flex flex-col items-center text-center transition duration-300";
-            btn2.querySelector('i').className = "fa-solid fa-microchip text-blue-500 text-base mb-1";
-            btn2.querySelectorAll('span')[0].className = "text-xs font-black text-blue-950";
-            
-            btn1.className = "p-3 rounded-xl border-2 border-white hover:border-blue-200 bg-white flex flex-col items-center text-center transition duration-300";
-            btn1.querySelector('i').className = "fa-solid fa-microchip text-gray-400 text-base mb-1";
-            btn1.querySelector('span').className = "text-xs font-bold text-gray-700";
-        }
-
-        document.getElementById('active-sensor-title').textContent = `Active Sensor: Sensor ${sensorId}`;
-        
-        // Load sensor values to sliders
-        const sensor = sensors[sensorId];
-        document.getElementById('slider-temp').value = sensor.temp;
-        document.getElementById('slider-hum').value = sensor.hum;
-        document.getElementById('slider-gas').value = sensor.gas;
-
-        updateCalibrationValues();
-        updateCalibration();
-        logConsole(`Switched control to Sensor ${sensorId} (${sensor.code})`);
-    }
-
-    function updateCalibrationValues() {
-        document.getElementById('slider-temp-val').textContent = parseFloat(document.getElementById('slider-temp').value).toFixed(1);
-        document.getElementById('slider-hum-val').textContent = parseFloat(document.getElementById('slider-hum').value).toFixed(1);
-        document.getElementById('slider-gas-val').textContent = parseInt(document.getElementById('slider-gas').value);
-    }
-
-    function normalize(val, min, max) {
-        return (val - min) / (max - min);
-    }
-
     // -----------------------------------------------------------------
-    // MLP and KNN Live Inference Logic
+    // Live Inference Logic
     // -----------------------------------------------------------------
     function updateCalibration() {
         updateCalibrationValues();
@@ -834,162 +577,7 @@
         document.getElementById('label-sensor1-val').className = `font-bold text-[10px] ${sens1Safety === 'bahaya' ? 'text-red-500 animate-pulse' : sens1Safety === 'waspada' ? 'text-yellow-600' : 'text-emerald-600'}`;
         document.getElementById('label-sensor2-val').className = `font-bold text-[10px] ${sens2Safety === 'bahaya' ? 'text-red-500 animate-pulse' : sens2Safety === 'waspada' ? 'text-yellow-600' : 'text-emerald-600'}`;
 
-        // 1. Run MLP
-        let dangerScore = 0.0;
-        let warningScore = 0.0;
-
-        if (temp > 40 || temp < -5) dangerScore += 2.0;
-        else if (temp > 8 || temp < 0) warningScore += 1.0;
-
-        if (hum > 85 || hum < 10) dangerScore += 2.0;
-        else if (hum > 70 || hum < 20) warningScore += 1.0;
-
-        if (gas > 400) dangerScore += 3.0;
-        else if (gas > 200) warningScore += 1.5;
-
-        const logitDanger = 2.5 * dangerScore - 1.5;
-        const logitWarning = 1.8 * warningScore - 0.5;
-        const logitSafe = 5.0 - 2.5 * dangerScore - 1.2 * warningScore;
-
-        const eDanger = Math.exp(logitDanger);
-        const eWarning = Math.exp(logitWarning);
-        const eSafe = Math.exp(logitSafe);
-        const sum = eDanger + eWarning + eSafe;
-
-        const pDanger = eDanger / sum;
-        const pWarning = eWarning / sum;
-        const pSafe = eSafe / sum;
-
-        let mlpClass = 'aman';
-        let mlpProb = pSafe;
-
-        if (pDanger > pWarning && pDanger > pSafe) {
-            mlpClass = 'bahaya';
-            mlpProb = pDanger;
-        } else if (pWarning > pDanger && pWarning > pSafe) {
-            mlpClass = 'waspada';
-            mlpProb = pWarning;
-        }
-
-        // Update MLP UI
-        const mlpBadge = document.getElementById('mlp-prob-val');
-        mlpBadge.textContent = `${mlpClass.toUpperCase()} (${(mlpProb * 100).toFixed(1)}%)`;
-        mlpBadge.className = `font-mono px-2 py-0.5 rounded border ${mlpClass === 'bahaya' ? 'text-red-500 bg-red-50 border-red-150' : mlpClass === 'waspada' ? 'text-yellow-600 bg-yellow-50 border-yellow-150' : 'text-emerald-600 bg-emerald-50 border-emerald-150'}`;
-
-        // SVG Neural Nodes glowing effect
-        const nodeO1 = document.getElementById('mlp-node-o1'); // Safe
-        const nodeO2 = document.getElementById('mlp-node-o2'); // Warning
-        const nodeO3 = document.getElementById('mlp-node-o3'); // Danger
-
-        nodeO1.setAttribute('fill', `rgba(16, 185, 129, ${0.15 + 0.85 * pSafe})`);
-        nodeO1.setAttribute('r', mlpClass === 'aman' ? '7.5' : '5.5');
-        nodeO1.setAttribute('stroke', mlpClass === 'aman' ? '#FFFFFF' : 'none');
-        if (mlpClass === 'aman') nodeO1.setAttribute('stroke-width', '1.5');
-
-        nodeO2.setAttribute('fill', `rgba(245, 158, 11, ${0.15 + 0.85 * pWarning})`);
-        nodeO2.setAttribute('r', mlpClass === 'waspada' ? '7.5' : '5.5');
-        nodeO2.setAttribute('stroke', mlpClass === 'waspada' ? '#FFFFFF' : 'none');
-        if (mlpClass === 'waspada') nodeO2.setAttribute('stroke-width', '1.5');
-
-        nodeO3.setAttribute('fill', `rgba(239, 68, 68, ${0.15 + 0.85 * pDanger})`);
-        nodeO3.setAttribute('r', mlpClass === 'bahaya' ? '7.5' : '5.5');
-        nodeO3.setAttribute('stroke', mlpClass === 'bahaya' ? '#FFFFFF' : 'none');
-        if (mlpClass === 'bahaya') nodeO3.setAttribute('stroke-width', '1.5');
-
-
-        // 2. Run KNN
-        const k = parseInt(document.getElementById('knn-k-select').value) || 3;
-        
-        const t_norm = normalize(temp, -10, 50);
-        const h_norm = normalize(hum, 0, 100);
-        const g_norm = normalize(gas, 0, 600);
-
-        const distances = knnTrainingSet.map(item => {
-            const item_t = normalize(item.T, -10, 50);
-            const item_h = normalize(item.H, 0, 100);
-            const item_g = normalize(item.G, 0, 600);
-
-            const dist = Math.sqrt(
-                Math.pow(t_norm - item_t, 2) +
-                Math.pow(h_norm - item_h, 2) +
-                Math.pow(g_norm - item_g, 2)
-            );
-            return { item, dist };
-        });
-
-        distances.sort((a, b) => a.dist - b.dist);
-        const neighbors = distances.slice(0, k);
-
-        const votes = { 'aman': 0, 'waspada': 0, 'bahaya': 0 };
-        neighbors.forEach(n => {
-            votes[n.item.label]++;
-        });
-
-        let knnClass = 'aman';
-        let knnVotes = votes['aman'];
-
-        if (votes['bahaya'] > votes['waspada'] && votes['bahaya'] > votes['aman']) {
-            knnClass = 'bahaya';
-            knnVotes = votes['bahaya'];
-        } else if (votes['waspada'] > votes['bahaya'] && votes['waspada'] > votes['aman']) {
-            knnClass = 'waspada';
-            knnVotes = votes['waspada'];
-        } else if (votes['aman'] >= votes['bahaya'] && votes['aman'] >= votes['waspada']) {
-            // handle tie or majority safe
-            knnClass = 'aman';
-            knnVotes = votes['aman'];
-        }
-
-        const knnConfidence = (knnVotes / k) * 100;
-
-        // Update KNN UI
-        const knnBadge = document.getElementById('knn-class-val');
-        knnBadge.textContent = `${knnClass.toUpperCase()} (${knnVotes}/${k} votes)`;
-        knnBadge.className = `font-mono px-2 py-0.5 rounded border ${knnClass === 'bahaya' ? 'text-red-500 bg-red-50 border-red-150' : knnClass === 'waspada' ? 'text-yellow-600 bg-yellow-50 border-yellow-150' : 'text-emerald-600 bg-emerald-50 border-emerald-150'}`;
-
-        // Project dynamic query point in 2D plot space
-        const x_plot = 15 + 70 * (t_norm * 0.5 + h_norm * 0.5);
-        const y_plot = 15 + 70 * (1.0 - g_norm); // high gas anomalies go upper
-
-        const querySolid = document.getElementById('knn-query-point-solid');
-        const queryPing = document.getElementById('knn-query-point');
-
-        querySolid.style.left = `${x_plot}%`;
-        querySolid.style.top = `${y_plot}%`;
-        queryPing.style.left = `${x_plot}%`;
-        queryPing.style.top = `${y_plot}%`;
-
-        // Render line connections to K nearest neighbors
-        const svgConn = document.getElementById('knn-svg-connections');
-        svgConn.innerHTML = '';
-        neighbors.forEach(n => {
-            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-            line.setAttribute('x1', `${x_plot}%`);
-            line.setAttribute('y1', `${y_plot}%`);
-            line.setAttribute('x2', `${n.item.x_plot}%`);
-            line.setAttribute('y2', `${n.item.y_plot}%`);
-            
-            let color = 'rgba(16, 185, 129, 0.45)'; // Safe
-            if (n.item.label === 'waspada') color = 'rgba(245, 158, 11, 0.45)';
-            else if (n.item.label === 'bahaya') color = 'rgba(239, 68, 68, 0.45)';
-            
-            line.setAttribute('stroke', color);
-            line.setAttribute('stroke-width', '1.5');
-            line.setAttribute('class', 'knn-connection-line');
-            svgConn.appendChild(line);
-        });
-
-        // 3. Update Decision Consensus
-        const consensusBadge = document.getElementById('badge-consensus');
-        if (mlpClass === knnClass) {
-            consensusBadge.className = "text-[9px] font-black uppercase px-2 py-0.5 rounded bg-emerald-500 text-white flex items-center gap-1 shadow-sm";
-            consensusBadge.innerHTML = '<i class="fa-solid fa-circle-check"></i> Models Match';
-        } else {
-            consensusBadge.className = "text-[9px] font-black uppercase px-2 py-0.5 rounded bg-amber-500 text-white flex items-center gap-1 shadow-sm";
-            consensusBadge.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Discrepancy';
-        }
-
-        // 4. Update Bottom Panels
+        // Update Bottom Panels
         const currentActive = sensors[activeSensorId];
         document.getElementById('info-sensor-code').value = currentActive.code;
         document.getElementById('info-sensor-name').value = currentActive.name;
@@ -998,7 +586,7 @@
         const metricsInput = document.getElementById('info-sensor-metrics');
         metricsInput.value = `Temp: ${temp.toFixed(1)}°C | Hum: ${hum.toFixed(0)}% | Gas: ${gas} ppm`;
         
-        const finalClass = mlpClass; // consensus default to MLP
+        const finalClass = getQuickSafetyLabel(temp, hum, gas);
         if (finalClass === 'bahaya') {
             metricsInput.className = "w-full px-3 py-2 text-xs font-bold text-red-500 gui-input";
         } else if (finalClass === 'waspada') {
@@ -1017,8 +605,7 @@
             <b>Sensor Name:</b> ${currentActive.name}<br>
             <b>Status:</b> <span class="font-extrabold ${statusColor}">${safetyStatusText}</span><br>
             <b>Location:</b> ${currentActive.location}<br>
-            <b>Diagnostics:</b> ${diagNote}<br>
-            <b>Consensus:</b> MLP (${mlpClass.toUpperCase()}) | KNN (${knnClass.toUpperCase()})
+            <b>Diagnostics:</b> ${diagNote}
         `;
     }
 

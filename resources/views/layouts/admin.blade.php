@@ -172,9 +172,6 @@
                         <a href="{{ route('admin.categories.index') }}" class="w-full py-2.5 px-4 rounded-xl text-xs font-black text-center text-white gui-tactile-btn flex items-center justify-start gap-2.5 {{ request()->routeIs('admin.categories.*') ? 'gui-tactile-btn-active' : '' }}">
                             <i class="fa-solid fa-circle-info w-4 text-center"></i> Information Mode
                         </a>
-                        <a href="{{ route('admin.sensors.index') }}" class="w-full py-2.5 px-4 rounded-xl text-xs font-black text-center text-white gui-tactile-btn flex items-center justify-start gap-2.5 {{ request()->routeIs('admin.sensors.*') ? 'gui-tactile-btn-active' : '' }}">
-                            <i class="fa-solid fa-wand-magic-sparkles w-4 text-center"></i> Mode Switcher
-                        </a>
                     </div>
                     
                     <!-- Section: CONTROL PANEL -->

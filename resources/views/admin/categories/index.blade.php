@@ -29,13 +29,18 @@
                     <i class="{{ $cat->icon }}"></i>
                 </div>
                 
-                <!-- Action Delete -->
-                <form action="{{ route('admin.categories.destroy', $cat) }}" method="POST" onsubmit="return confirm('Hapus kategori ini?')" class="relative z-10">
-                    @csrf @method('DELETE')
-                    <button class="p-2 rounded-lg text-gray-300 hover:text-red-500 hover:bg-red-50 transition opacity-0 group-hover:opacity-100 duration-300" title="Hapus Kategori">
-                        <i class="fa-solid fa-trash-can text-sm"></i>
+                <!-- Actions -->
+                <div class="flex gap-1 relative z-10">
+                    <button onclick="openEditModal({{ $cat->id }}, '{{ addslashes($cat->name) }}', '{{ addslashes($cat->description ?? '') }}', '{{ addslashes($cat->icon) }}')" class="p-2 rounded-lg text-gray-300 hover:text-blue-500 hover:bg-blue-50 transition opacity-0 group-hover:opacity-100 duration-300" title="Edit Kategori">
+                        <i class="fa-solid fa-pen-to-square text-sm"></i>
                     </button>
-                </form>
+                    <form action="{{ route('admin.categories.destroy', $cat) }}" method="POST" onsubmit="return confirm('Hapus kategori ini?')" class="inline">
+                        @csrf @method('DELETE')
+                        <button class="p-2 rounded-lg text-gray-300 hover:text-red-500 hover:bg-red-50 transition opacity-0 group-hover:opacity-100 duration-300" title="Hapus Kategori">
+                            <i class="fa-solid fa-trash-can text-sm"></i>
+                        </button>
+                    </form>
+                </div>
             </div>
             
             <h3 class="text-lg font-bold text-gray-900 group-hover:text-brandGreen transition duration-300">{{ $cat->name }}</h3>
@@ -110,5 +115,54 @@
         </form>
     </div>
 </div>
+
+<!-- Edit Category Modal -->
+<div id="editCatModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm transition duration-300">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md border border-gray-100 transform transition-all duration-300">
+        <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/30">
+            <h3 class="text-lg font-bold font-outfit text-gray-900 flex items-center gap-2">
+                <i class="fa-solid fa-pen-to-square text-blue-500"></i>
+                Edit Kategori Pangan
+            </h3>
+            <button onclick="document.getElementById('editCatModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600 p-1.5 rounded-lg hover:bg-gray-100 transition">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+        
+        <form id="editCatForm" method="POST" class="p-6 space-y-5">
+            @csrf
+            @method('PUT')
+            <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">Nama Kategori</label>
+                <input type="text" id="edit_name" name="name" required class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-400/30 focus:border-blue-500 bg-white outline-none transition duration-300">
+            </div>
+            
+            <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">Deskripsi Singkat</label>
+                <textarea id="edit_description" name="description" rows="3" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-400/30 focus:border-blue-500 bg-white outline-none resize-none transition duration-300"></textarea>
+            </div>
+            
+            <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">Icon (FontAwesome Class)</label>
+                <input type="text" id="edit_icon" name="icon" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-400/30 focus:border-blue-500 bg-white outline-none transition duration-300">
+            </div>
+            
+            <button type="submit" class="w-full bg-blue-500 text-white py-3 rounded-xl font-bold hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-500/25 transition duration-300 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-floppy-disk"></i>
+                Simpan Perubahan
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+function openEditModal(id, name, description, icon) {
+    document.getElementById('editCatForm').action = `/admin/categories/${id}`;
+    document.getElementById('edit_name').value = name;
+    document.getElementById('edit_description').value = description;
+    document.getElementById('edit_icon').value = icon;
+    document.getElementById('editCatModal').classList.remove('hidden');
+}
+</script>
 
 @endsection

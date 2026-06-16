@@ -12,6 +12,28 @@ Route::get('/', function () {
     return view('index');
 });
 
+Route::get('/api/latest-metric', function () {
+    $latestReading = \App\Models\SensorReading::with(['sensorDevice', 'foodCategory'])->latest('read_at')->first();
+    
+    if (!$latestReading) {
+        return response()->json(null);
+    }
+
+    return response()->json([
+        'temperature' => $latestReading->temperature,
+        'temperature_location' => $latestReading->sensorDevice ? $latestReading->sensorDevice->location : 'Cold Storage A',
+        'gas_level' => $latestReading->gas_level,
+        'gas_location' => $latestReading->sample_name ?? 'Daging Sapi Lot B',
+        'gas_status' => $latestReading->is_anomaly ? 'Waspada' : 'Aman',
+        'safety_status' => $latestReading->safety_status ?? ($latestReading->is_anomaly ? 'Terdeteksi Anomali' : 'Pangan Steril & Aman'),
+        'is_anomaly' => $latestReading->is_anomaly
+    ]);
+});
+
+// API Endpoint for ESP32 to send data
+Route::post('/api/sensor-data', [SensorTestController::class, 'storeReading'])
+    ->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class);
+
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 

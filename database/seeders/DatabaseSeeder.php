@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
     {
         // 1. Seed Default User
         User::updateOrCreate(
-            ['email' => 'test@example.com'],
+            ['email' => 'admin@fdtest.com'],
             [
                 'name' => 'Test User',
                 'password' => Hash::make('password'),

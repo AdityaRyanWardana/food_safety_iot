@@ -154,10 +154,10 @@
                                     </div>
                                     <div>
                                         <p class="text-[10px] font-bold text-gray-400 uppercase">Suhu Gudang</p>
-                                        <p class="text-sm font-extrabold text-white">Cold Storage A</p>
+                                        <p class="text-sm font-extrabold text-white" id="live-temp-location">Cold Storage A</p>
                                     </div>
                                 </div>
-                                <p class="text-2xl font-black text-white font-outfit">4.2°C</p>
+                                <p class="text-2xl font-black text-white font-outfit" id="live-temp-value">4.2°C</p>
                             </div>
 
                             <!-- Gas -->
@@ -168,12 +168,12 @@
                                     </div>
                                     <div>
                                         <p class="text-[10px] font-bold text-gray-400 uppercase">Kadar Gas NH3</p>
-                                        <p class="text-sm font-extrabold text-white">Daging Sapi Lot B</p>
+                                        <p class="text-sm font-extrabold text-white" id="live-gas-location">Daging Sapi Lot B</p>
                                     </div>
                                 </div>
                                 <div class="text-right">
-                                    <p class="text-2xl font-black text-yellow-500 font-outfit">85 ppm</p>
-                                    <span class="text-[8px] font-bold text-yellow-400 uppercase tracking-widest">Waspada</span>
+                                    <p class="text-2xl font-black text-yellow-500 font-outfit" id="live-gas-value">85 ppm</p>
+                                    <span class="text-[8px] font-bold text-yellow-400 uppercase tracking-widest" id="live-gas-status">Waspada</span>
                                 </div>
                             </div>
 
@@ -181,7 +181,7 @@
                             <div class="bg-brandGreen/10 rounded-2xl p-4 border border-brandGreen/25 text-center mt-2">
                                 <p class="text-[10px] font-bold text-brandGreen uppercase tracking-widest mb-1">Status Keamanan Pangan</p>
                                 <p class="text-base font-extrabold text-white flex items-center justify-center gap-1.5">
-                                    <i class="fa-solid fa-shield-halved text-brandGreen"></i> Pangan Steril & Aman
+                                    <i class="fa-solid fa-shield-halved text-brandGreen" id="live-safety-icon"></i> <span id="live-safety-text">Pangan Steril & Aman</span>
                                 </p>
                             </div>
                         </div>
@@ -286,6 +286,57 @@
             once: true,
             duration: 800,
         });
+
+        // Real-time Live Metric Fetching
+        async function fetchLiveMetrics() {
+            try {
+                const response = await fetch('/api/latest-metric');
+                const data = await response.json();
+                
+                if (data) {
+                    document.getElementById('live-temp-value').textContent = data.temperature + '°C';
+                    document.getElementById('live-temp-location').textContent = data.temperature_location;
+                    
+                    document.getElementById('live-gas-value').textContent = data.gas_level + ' ppm';
+                    document.getElementById('live-gas-location').textContent = data.gas_location;
+                    document.getElementById('live-gas-status').textContent = data.gas_status;
+                    
+                    const gasValueEl = document.getElementById('live-gas-value');
+                    const gasStatusEl = document.getElementById('live-gas-status');
+                    const safetyIconEl = document.getElementById('live-safety-icon');
+                    const safetyTextEl = document.getElementById('live-safety-text');
+                    const safetyContainer = safetyTextEl.closest('.bg-brandGreen\\/10') || safetyTextEl.closest('.bg-red-500\\/10');
+                    
+                    if (data.is_anomaly) {
+                        gasValueEl.className = 'text-2xl font-black text-red-500 font-outfit';
+                        gasStatusEl.className = 'text-[8px] font-bold text-red-400 uppercase tracking-widest';
+                        
+                        safetyIconEl.className = 'fa-solid fa-triangle-exclamation text-red-500';
+                        safetyTextEl.textContent = data.safety_status;
+                        
+                        if (safetyContainer) {
+                            safetyContainer.className = 'bg-red-500/10 rounded-2xl p-4 border border-red-500/25 text-center mt-2 transition-all duration-500';
+                        }
+                    } else {
+                        gasValueEl.className = 'text-2xl font-black text-brandGreen font-outfit';
+                        gasStatusEl.className = 'text-[8px] font-bold text-brandGreen uppercase tracking-widest';
+                        
+                        safetyIconEl.className = 'fa-solid fa-shield-halved text-brandGreen';
+                        safetyTextEl.textContent = data.safety_status;
+                        
+                        if (safetyContainer) {
+                            safetyContainer.className = 'bg-brandGreen/10 rounded-2xl p-4 border border-brandGreen/25 text-center mt-2 transition-all duration-500';
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching live metrics:', error);
+            }
+        }
+
+        // Fetch immediately and then every 3 seconds
+        fetchLiveMetrics();
+        setInterval(fetchLiveMetrics, 3000);
     </script>
 </body>
 </html>

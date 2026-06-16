@@ -11,12 +11,7 @@
         <p class="text-gray-500 text-sm mt-1">Kelola informasi dasar akun, hak akses administrator, dan pembaharuan kata sandi.</p>
     </div>
 
-    @if(session('success'))
-        <div class="bg-green-50 border border-green-200/50 text-emerald-700 px-4 py-3.5 rounded-xl mb-6 flex items-center gap-2 text-sm font-semibold shadow-sm shadow-emerald-50">
-            <i class="fa-solid fa-circle-check"></i>
-            {{ session('success') }}
-        </div>
-    @endif
+
 
     <div class="bg-white rounded-2xl shadow-sm border border-gray-150/70 overflow-hidden transition duration-300">
         <div class="p-8">

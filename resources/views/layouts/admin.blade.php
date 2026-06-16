@@ -112,6 +112,35 @@
     <!-- MAIN DESKTOP APPLICATION WINDOW CONTAINER -->
     <div class="desktop-window w-full max-w-[1600px] h-[92vh] rounded-3xl overflow-hidden flex flex-col relative">
         
+        <!-- Global Alert Toast -->
+        @if(session('success'))
+        <div id="global-toast" class="absolute top-20 right-6 z-50 transform transition-all duration-500 translate-x-0 opacity-100">
+            <div class="bg-white border-2 border-brandGreen shadow-xl rounded-2xl p-4 flex items-start gap-4 min-w-[320px] max-w-sm">
+                <div class="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center flex-shrink-0">
+                    <i class="fa-solid fa-check text-brandGreen text-lg"></i>
+                </div>
+                <div class="flex-1 pt-0.5">
+                    <h4 class="text-sm font-black text-gray-900 font-outfit">Aksi Berhasil</h4>
+                    <p class="text-xs font-semibold text-gray-500 mt-0.5">{{ session('success') }}</p>
+                </div>
+                <button onclick="closeGlobalToast()" class="text-gray-400 hover:text-gray-600 transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+        </div>
+        <script>
+            function closeGlobalToast() {
+                const toast = document.getElementById('global-toast');
+                if (toast) {
+                    toast.classList.remove('translate-x-0', 'opacity-100');
+                    toast.classList.add('translate-x-[120%]', 'opacity-0');
+                    setTimeout(() => toast.style.display = 'none', 500);
+                }
+            }
+            setTimeout(closeGlobalToast, 4500);
+        </script>
+        @endif
+
         <!-- ==================== WINDOW TITLEBAR (Header) ==================== -->
         <header class="h-12 bg-[#E1ECF5] border-b border-[#BDCEDA] flex items-center justify-between px-6 z-20 flex-shrink-0">
             <!-- Left: App Icon & Title -->

@@ -37,13 +37,20 @@ class ContaminationController extends Controller
 
     public function destroy(ContaminationLog $log)
     {
+        if ($log->sensor_reading_id) {
+            \App\Models\SensorReading::where('id', $log->sensor_reading_id)->delete();
+        }
         $log->delete();
-        return redirect()->route('admin.contamination.index')->with('success', 'Log kontaminasi berhasil dihapus.');
+        return redirect()->route('admin.contamination.index')->with('success', 'Log kontaminasi dan data sensor terkait berhasil dihapus.');
     }
 
     public function clearAll()
     {
+        $readingIds = ContaminationLog::whereNotNull('sensor_reading_id')->pluck('sensor_reading_id');
         ContaminationLog::query()->delete();
-        return redirect()->route('admin.contamination.index')->with('success', 'Seluruh riwayat log kontaminasi berhasil dihapus.');
+        if ($readingIds->isNotEmpty()) {
+            \App\Models\SensorReading::whereIn('id', $readingIds)->delete();
+        }
+        return redirect()->route('admin.contamination.index')->with('success', 'Seluruh riwayat log kontaminasi dan data sensor terkait berhasil dihapus.');
     }
 }

@@ -14,7 +14,7 @@ return new class extends Migration
             $table->foreignId('sensor_device_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('food_category_id')->nullable()->constrained()->nullOnDelete();
             $table->string('type');
-            $table->enum('severity', ['rendah', 'sedang', 'tinggi', 'kritis'])->default('sedang');
+            $table->enum('severity', ['aman', 'terkontaminasi', 'berbahaya'])->default('aman');
             $table->text('description')->nullable();
             $table->enum('status', ['terdeteksi', 'investigasi', 'teratasi'])->default('terdeteksi');
             $table->timestamp('detected_at')->nullable();

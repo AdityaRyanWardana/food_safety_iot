@@ -146,10 +146,10 @@
                     <!-- Severity Badge -->
                     <td class="px-6 py-4 text-center">
                         <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold border
-                            @if($log->severity==='kritis') bg-red-50 text-red-600 border-red-200/50
-                            @elseif($log->severity==='tinggi') bg-orange-50 text-orange-600 border-orange-200/50
-                            @elseif($log->severity==='sedang') bg-yellow-50 text-yellow-600 border-yellow-200/50
-                            @else bg-blue-50 text-blue-600 border-blue-200/50
+                            @if($log->severity==='berbahaya') bg-red-50 text-red-600 border-red-200/50
+                            @elseif($log->severity==='terkontaminasi') bg-orange-50 text-orange-600 border-orange-200/50
+                            @elseif($log->severity==='aman') bg-green-50 text-emerald-600 border-green-200/50
+                            @else bg-gray-50 text-gray-600 border-gray-200/50
                             @endif">
                             {{ ucfirst($log->severity) }}
                         </span>

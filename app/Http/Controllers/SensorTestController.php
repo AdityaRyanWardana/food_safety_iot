@@ -66,7 +66,7 @@ class SensorTestController extends Controller
                 'sensor_device_id' => $request->sensor_device_id,
                 'food_category_id' => $request->food_category_id,
                 'type' => $type,
-                'severity' => $safetyStatus === 'bahaya' ? 'kritis' : 'sedang',
+                'severity' => $safetyStatus === 'bahaya' ? 'berbahaya' : 'terkontaminasi',
                 'description' => "Anomali terdeteksi pada sampel: {$request->sample_name}. Suhu: {$request->temperature}°C, Gas: {$request->gas_level} ppm",
                 'status' => 'terdeteksi',
                 'detected_at' => now(),

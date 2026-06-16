@@ -58,6 +58,11 @@ class SensorTestController extends Controller
             'read_at' => now(),
         ]);
 
+        // Update last_reading_at on the device if available
+        if ($request->sensor_device_id) {
+            SensorDevice::where('id', $request->sensor_device_id)->update(['last_reading_at' => $reading->read_at]);
+        }
+
         // If anomaly detected, create contamination log
         if ($isAnomaly) {
             $type = $this->detectContaminationType($request->temperature, $request->gas_level);

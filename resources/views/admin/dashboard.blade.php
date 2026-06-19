@@ -323,6 +323,82 @@
         </table>
     </div>
 </div>
+<!-- ==================== JAVASCRIPT SIMULATION ==================== -->
+<script>
+    // -----------------------------------------------------------------
+    // Chart.js Setup
+    // -----------------------------------------------------------------
+    let telemetryChart;
+    const maxDataPoints = 20;
+    const chartLabels = Array(maxDataPoints).fill('');
+    const chartDataTemp = Array(maxDataPoints).fill(0);
+    const chartDataHum = Array(maxDataPoints).fill(0);
+    const chartDataGas = Array(maxDataPoints).fill(0);
+
+    function initChart() {
+        const ctx = document.getElementById('telemetryChart').getContext('2d');
+        telemetryChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: chartLabels,
+                datasets: [
+                    {
+                        label: 'Suhu (°C)',
+                        data: chartDataTemp,
+                        borderColor: '#EF4444',
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        borderWidth: 2,
+                        pointRadius: 2,
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: 'Kelembaban (%)',
+                        data: chartDataHum,
+                        borderColor: '#3B82F6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 2,
+                        pointRadius: 2,
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: 'Gas (ppm/10)',
+                        data: chartDataGas,
+                        borderColor: '#F59E0B',
+                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                        borderWidth: 2,
+                        pointRadius: 2,
+                        tension: 0.4,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: {
+                    duration: 0
+                },
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: '#F3F4F6' },
+                        ticks: {
+                            font: { size: 10, family: "'Plus Jakarta Sans', sans-serif" }
+                        }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { display: false }
+                    }
+                }
+            }
+        });
+    }
 
     // -----------------------------------------------------------------
     // Chart Live Simulation Logic
@@ -353,29 +429,31 @@
         }
     }
 
-    function startAutoSimulation() {
+    function fetchRealTimeData() {
         setInterval(() => {
-            autoSimTime += 0.15;
-            
-            // Oscillate based on sine waves to demonstrate dynamic ML outputs
-            let t_val = 18.2 + 15.0 * Math.sin(autoSimTime);
-            let h_val = 65.0 + 20.0 * Math.sin(autoSimTime * 1.2);
-            let g_val = Math.round(280 + 220 * Math.sin(autoSimTime * 0.8));
-
-            // Constraints to range limits
-            t_val = Math.max(-10, Math.min(50, t_val));
-            h_val = Math.max(0, Math.min(100, h_val));
-            g_val = Math.max(0, Math.min(600, g_val));
-
-            updateCalibration(t_val, h_val, g_val);
-            
-        }, 800);
+            fetch('/api/latest-metric')
+                .then(response => response.json())
+                .then(data => {
+                    if (data) {
+                        let t_val = parseFloat(data.temperature) || 0;
+                        let h_val = parseFloat(data.humidity) || 0;
+                        let g_val = parseInt(data.gas_level) || 0;
+                        updateCalibration(t_val, h_val, g_val);
+                    } else {
+                        updateCalibration(0, 0, 0);
+                    }
+                })
+                .catch(err => {
+                    console.error('Failed to fetch telemetry:', err);
+                    updateCalibration(0, 0, 0);
+                });
+        }, 2000);
     }
 
     // Initialize chart and simulation on load
     window.addEventListener('DOMContentLoaded', () => {
         initChart();
-        startAutoSimulation();
+        fetchRealTimeData();
     });
 
     // -----------------------------------------------------------------
@@ -383,6 +461,9 @@
     // -----------------------------------------------------------------
     function confirmReadingsDelete(button) {
         if (button.classList.contains('confirm-state')) {
+            if (button.dataset.submitting) return;
+            button.dataset.submitting = 'true';
+            button.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i>...';
             button.closest('form').submit();
             return;
         }
@@ -437,6 +518,9 @@
 
     function confirmBulkClear(button) {
         if (button.classList.contains('confirm-state')) {
+            if (button.dataset.submitting) return;
+            button.dataset.submitting = 'true';
+            button.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Proses...';
             button.closest('form').submit();
             return;
         }

@@ -21,6 +21,7 @@ Route::get('/api/latest-metric', function () {
 
     return response()->json([
         'temperature' => $latestReading->temperature,
+        'humidity' => $latestReading->humidity,
         'temperature_location' => $latestReading->sensorDevice ? $latestReading->sensorDevice->location : 'Cold Storage A',
         'gas_level' => $latestReading->gas_level,
         'gas_location' => $latestReading->sample_name ?? 'Daging Sapi Lot B',

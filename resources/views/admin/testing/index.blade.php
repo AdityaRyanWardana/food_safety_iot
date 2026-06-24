@@ -158,15 +158,7 @@
             </div>
 
             <!-- Live Status & Raw ADC Row (Premium Hardware Style) -->
-            <div class="mt-4 pt-4 border-t border-gray-150/70 grid grid-cols-2 gap-4">
-                <div class="bg-gray-50/50 rounded-xl px-4 py-2.5 flex items-center justify-between border border-gray-200/50 shadow-inner">
-                    <div class="flex items-center gap-2">
-                        <span class="text-[9px] font-extrabold text-gray-500 uppercase">Status Sensor:</span>
-                        <span id="liveStatusBadge" class="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-gray-400 text-white flex items-center gap-1 shadow-sm">
-                            <i class="fa-solid fa-circle-question"></i> MENUNGGU DATA
-                        </span>
-                    </div>
-                </div>
+            <div class="mt-4 pt-4 border-t border-gray-150/70 grid grid-cols-1 gap-4">
                 <div class="bg-gray-50/50 rounded-xl px-4 py-2.5 flex items-center justify-between border border-gray-200/50 shadow-inner">
                     <div class="flex items-center gap-2">
                         <span class="text-[9px] font-extrabold text-gray-500 uppercase">Raw ADC MQ135:</span>

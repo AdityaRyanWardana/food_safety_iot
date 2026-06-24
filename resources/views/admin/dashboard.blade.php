@@ -125,31 +125,7 @@
     </div>
 </div>
 
-<!-- ==================== GRAFIK TELEMETRI SENSOR ==================== -->
-<div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-8 mt-2">
-    <div class="px-6 py-5 border-b border-gray-100 bg-gray-50/30 flex items-center justify-between">
-        <div>
-            <h3 class="font-bold font-outfit text-gray-900 flex items-center gap-2">
-                <i class="fa-solid fa-chart-area text-blue-500"></i>
-                Grafik Telemetri Real-Time
-            </h3>
-            <p class="text-xs text-gray-400 mt-0.5">Visualisasi data suhu, kelembaban, dan kadar gas dari sensor aktif.</p>
-        </div>
-        <div class="flex gap-2">
-            <span class="inline-flex items-center gap-1.5 text-[10px] font-bold text-gray-500 px-2.5 py-1 bg-white border border-gray-200 rounded-lg"><span class="w-2 h-2 rounded-full bg-red-500"></span> Suhu (°C)</span>
-            <span class="inline-flex items-center gap-1.5 text-[10px] font-bold text-gray-500 px-2.5 py-1 bg-white border border-gray-200 rounded-lg"><span class="w-2 h-2 rounded-full bg-blue-500"></span> Kelembaban (%)</span>
-            <span class="inline-flex items-center gap-1.5 text-[10px] font-bold text-gray-500 px-2.5 py-1 bg-white border border-gray-200 rounded-lg"><span class="w-2 h-2 rounded-full bg-amber-500"></span> Gas (ppm/10)</span>
-        </div>
-    </div>
-    <div class="p-5">
-        <div class="h-[300px] w-full">
-            <canvas id="telemetryChart"></canvas>
-        </div>
-    </div>
-</div>
 
-<!-- Chart.js CDN -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <!-- ==================== TABEL LOG DATABASE ==================== -->
 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-8">
@@ -198,8 +174,7 @@
                     <th class="px-6 py-4 font-bold">ID Perangkat</th>
                     <th class="px-6 py-4 font-bold">Sampel Makanan</th>
                     <th class="px-6 py-4 font-bold">Kategori</th>
-                    <th class="px-6 py-4 font-bold">Metrik Sensor</th>
-                    <th class="px-6 py-4 font-bold text-center">Status</th>
+                    <th class="px-6 py-4 font-bold w-1/3">Metrik Sensor</th>
                     <th class="px-6 py-4 font-bold text-right">Aksi</th>
                 </tr>
             </thead>
@@ -258,22 +233,6 @@
                         </div>
                     </td>
                     
-                    <!-- Safety Status -->
-                    <td class="px-6 py-4 text-center">
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold border transition shadow-sm
-                            @if($reading->safety_status === 'aman') bg-green-50 text-emerald-700 border-green-200/60
-                            @elseif($reading->safety_status === 'waspada') bg-yellow-50 text-yellow-700 border-yellow-200/60
-                            @else bg-red-50 text-red-600 border-red-200/60
-                            @endif">
-                            <span class="w-1.5 h-1.5 rounded-full mr-1.5 animate-pulse
-                                @if($reading->safety_status === 'aman') bg-emerald-500
-                                @elseif($reading->safety_status === 'waspada') bg-yellow-500
-                                @else bg-red-500
-                                @endif"></span>
-                            {{ ucfirst($reading->safety_status) }}
-                        </span>
-                    </td>
-                    
                     <!-- Action -->
                     <td class="px-6 py-4 text-right">
                         <form action="{{ route('admin.readings.destroy', $reading) }}" method="POST" class="inline-flex items-center gap-1.5 justify-end">
@@ -289,7 +248,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" class="px-6 py-16 text-center text-gray-400">
+                    <td colspan="5" class="px-6 py-16 text-center text-gray-400">
                         <div class="max-w-sm mx-auto">
                             <div class="w-16 h-16 mx-auto bg-gray-50 rounded-full flex items-center justify-center text-gray-455 mb-4 border border-gray-100">
                                 <i class="fa-solid fa-chart-line text-2xl"></i>
@@ -306,7 +265,7 @@
                 
                 <!-- Dynamic Empty State Row (Initially Hidden) -->
                 <tr id="dynamic-empty-state-row" class="hidden">
-                    <td colspan="6" class="px-6 py-16 text-center text-gray-400">
+                    <td colspan="5" class="px-6 py-16 text-center text-gray-400">
                         <div class="max-w-sm mx-auto">
                             <div class="w-16 h-16 mx-auto bg-gray-55 rounded-full flex items-center justify-center text-gray-400 mb-4 border border-gray-100">
                                 <i class="fa-solid fa-flask-vial text-2xl text-brandGreen animate-bounce"></i>
@@ -325,136 +284,7 @@
 </div>
 <!-- ==================== JAVASCRIPT SIMULATION ==================== -->
 <script>
-    // -----------------------------------------------------------------
-    // Chart.js Setup
-    // -----------------------------------------------------------------
-    let telemetryChart;
-    const maxDataPoints = 20;
-    const chartLabels = Array(maxDataPoints).fill('');
-    const chartDataTemp = Array(maxDataPoints).fill(0);
-    const chartDataHum = Array(maxDataPoints).fill(0);
-    const chartDataGas = Array(maxDataPoints).fill(0);
 
-    function initChart() {
-        const ctx = document.getElementById('telemetryChart').getContext('2d');
-        telemetryChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: chartLabels,
-                datasets: [
-                    {
-                        label: 'Suhu (°C)',
-                        data: chartDataTemp,
-                        borderColor: '#EF4444',
-                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                        borderWidth: 2,
-                        pointRadius: 2,
-                        tension: 0.4,
-                        fill: true
-                    },
-                    {
-                        label: 'Kelembaban (%)',
-                        data: chartDataHum,
-                        borderColor: '#3B82F6',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        borderWidth: 2,
-                        pointRadius: 2,
-                        tension: 0.4,
-                        fill: true
-                    },
-                    {
-                        label: 'Gas (ppm/10)',
-                        data: chartDataGas,
-                        borderColor: '#F59E0B',
-                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
-                        borderWidth: 2,
-                        pointRadius: 2,
-                        tension: 0.4,
-                        fill: true
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                animation: {
-                    duration: 0
-                },
-                plugins: {
-                    legend: { display: false }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: { color: '#F3F4F6' },
-                        ticks: {
-                            font: { size: 10, family: "'Plus Jakarta Sans', sans-serif" }
-                        }
-                    },
-                    x: {
-                        grid: { display: false },
-                        ticks: { display: false }
-                    }
-                }
-            }
-        });
-    }
-
-    // -----------------------------------------------------------------
-    // Chart Live Simulation Logic
-    // -----------------------------------------------------------------
-    let autoSimTime = 0;
-
-    function updateCalibration(t, h, g) {
-        // Update Chart
-        if (telemetryChart) {
-            const now = new Date();
-            const timeStr = now.toLocaleTimeString('id-ID', { hour12: false, hour: "numeric", minute: "numeric", second: "numeric" });
-            
-            // Push new data
-            telemetryChart.data.labels.push(timeStr);
-            telemetryChart.data.datasets[0].data.push(t);
-            telemetryChart.data.datasets[1].data.push(h);
-            telemetryChart.data.datasets[2].data.push(g / 10); // Scale down gas for charting
-
-            // Remove oldest data if exceeding max length
-            if (telemetryChart.data.labels.length > maxDataPoints) {
-                telemetryChart.data.labels.shift();
-                telemetryChart.data.datasets[0].data.shift();
-                telemetryChart.data.datasets[1].data.shift();
-                telemetryChart.data.datasets[2].data.shift();
-            }
-
-            telemetryChart.update();
-        }
-    }
-
-    function fetchRealTimeData() {
-        setInterval(() => {
-            fetch('/api/latest-metric')
-                .then(response => response.json())
-                .then(data => {
-                    if (data) {
-                        let t_val = parseFloat(data.temperature) || 0;
-                        let h_val = parseFloat(data.humidity) || 0;
-                        let g_val = parseInt(data.gas_level) || 0;
-                        updateCalibration(t_val, h_val, g_val);
-                    } else {
-                        updateCalibration(0, 0, 0);
-                    }
-                })
-                .catch(err => {
-                    console.error('Failed to fetch telemetry:', err);
-                    updateCalibration(0, 0, 0);
-                });
-        }, 2000);
-    }
-
-    // Initialize chart and simulation on load
-    window.addEventListener('DOMContentLoaded', () => {
-        initChart();
-        fetchRealTimeData();
-    });
 
     // -----------------------------------------------------------------
     // Legacy / Tabular logs controls & filters (Preserved functionality)

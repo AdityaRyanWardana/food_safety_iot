@@ -157,12 +157,12 @@
                 
             </div>
 
-            <!-- Live Status & Raw ADC Row (Premium Hardware Style) -->
+            <!-- Live Status Row (Premium Hardware Style) -->
             <div class="mt-4 pt-4 border-t border-gray-150/70 grid grid-cols-1 gap-4">
                 <div class="bg-gray-50/50 rounded-xl px-4 py-2.5 flex items-center justify-between border border-gray-200/50 shadow-inner">
                     <div class="flex items-center gap-2">
-                        <span class="text-[9px] font-extrabold text-gray-500 uppercase">Raw ADC MQ135:</span>
-                        <span id="liveAdcValue" class="text-xs font-mono font-black text-gray-700">--</span>
+                        <span class="text-[9px] font-extrabold text-gray-500 uppercase">Status Keamanan:</span>
+                        <span id="liveStatusValue" class="text-xs font-mono font-black text-gray-700">--</span>
                     </div>
                 </div>
             </div>
@@ -247,7 +247,15 @@
 
 <script>
 let port = null, reader = null, isConnected = false;
-let currentData = { temperature: null, humidity: null, gas_level: null, safety_status: null, raw_adc: null };
+let currentData = { temperature: null, humidity: null, gas_level: null, safety_status: null };
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Auto-select the first valid sensor device
+    const sensorDeviceSelect = document.getElementById('sensorDevice');
+    if (sensorDeviceSelect && sensorDeviceSelect.options.length > 1) {
+        sensorDeviceSelect.selectedIndex = 1; // select the first actual sensor
+    }
+});
 
 function log(msg, type = 'info') {
     const el = document.getElementById('serialLog');
@@ -358,37 +366,43 @@ function parseAndDisplay(line) {
         const val = p.substring(colonIndex + 1).trim();
 
         // 1. Handle non-numeric "Status" from Arduino
-        if (key.includes('STATUS')) {
+        if (key.includes('STATUS') || key.includes('QUALITY')) {
             const statusUpper = val.toUpperCase();
+            let displayStatus = '--';
             if (statusUpper.includes('AMAN')) {
                 currentData.safety_status = 'aman';
-                updateLiveStatusUI('aman', 'Aman (Optimal)');
+                displayStatus = 'Aman';
             } else if (statusUpper.includes('KONTAMINASI') || statusUpper.includes('TERKONTAMINASI')) {
                 currentData.safety_status = 'waspada';
-                updateLiveStatusUI('waspada', 'Terkontaminasi');
+                displayStatus = 'Terkontaminasi';
             } else if (statusUpper.includes('BAHAYA') || statusUpper.includes('BERBAHAYA')) {
                 currentData.safety_status = 'bahaya';
-                updateLiveStatusUI('bahaya', 'Berbahaya');
+                displayStatus = 'Berbahaya';
             }
+            document.getElementById('liveStatusValue').textContent = displayStatus;
+            document.getElementById('liveStatusValue').className = `text-xs font-mono font-black ${currentData.safety_status === 'aman' ? 'text-emerald-600' : (currentData.safety_status === 'waspada' ? 'text-yellow-600' : 'text-red-600')}`;
             return;
         }
 
-        // 2. Handle raw ADC value from Arduino
-        if (key.includes('ADC')) {
-            const rawAdc = parseInt(val);
-            if (!isNaN(rawAdc)) {
-                document.getElementById('liveAdcValue').textContent = rawAdc;
-                currentData.raw_adc = rawAdc;
-            }
-            return;
-        }
-
+        // 2. Parse numbers for Temperature, Humidity, and Gas/ADC
         const num = parseFloat(val);
         if (isNaN(num)) return;
 
-        if (key.includes('TEMP') || key === 'T' || key.includes('SUHU')) { currentData.temperature = num; document.getElementById('liveTemp').textContent = num.toFixed(2); parsedAny = true; }
-        else if (key.includes('HUM') || key === 'H' || key.includes('LEMBAB')) { currentData.humidity = num; document.getElementById('liveHum').textContent = num.toFixed(2); parsedAny = true; }
-        else if (key.includes('GAS') || key === 'G') { currentData.gas_level = num; document.getElementById('liveGas').textContent = num.toFixed(2); parsedAny = true; }
+        if (key.includes('TEMP') || key === 'T' || key.includes('SUHU')) { 
+            currentData.temperature = num; 
+            document.getElementById('liveTemp').textContent = num.toFixed(2); 
+            parsedAny = true; 
+        }
+        else if (key.includes('HUM') || key === 'H' || key.includes('LEMBAB')) { 
+            currentData.humidity = num; 
+            document.getElementById('liveHum').textContent = num.toFixed(2); 
+            parsedAny = true; 
+        }
+        else if (key.includes('GAS') || key === 'G' || key.includes('ADC')) { 
+            currentData.gas_level = num; 
+            document.getElementById('liveGas').textContent = num.toFixed(0); 
+            parsedAny = true; 
+        }
     });
 
     // Cara 3: Deteksi raw data angka saja (e.g. "25.5, 60.1, 120, 6.8")
@@ -432,7 +446,7 @@ async function saveCurrentReading() {
         sample_name: document.getElementById('sampleName').value,
         food_category_id: document.getElementById('foodCategory').value || null,
         sensor_device_id: document.getElementById('sensorDevice').value || null,
-        notes: (currentData.raw_adc ? `[Raw ADC MQ135: ${currentData.raw_adc}] ` : '') + document.getElementById('notes').value,
+        notes: (currentData.safety_status ? `[Status Web Serial: ${currentData.safety_status.toUpperCase()}] ` : '') + document.getElementById('notes').value,
         ...currentData
     };
     try {

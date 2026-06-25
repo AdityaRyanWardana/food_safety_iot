@@ -70,21 +70,7 @@
                         @endforeach
                     </select>
                 </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">Perangkat Sensor IoT</label>
-                    <select id="sensorDevice" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white outline-none focus:ring-2 focus:ring-[#8DC63F]/30 focus:border-brandGreen transition duration-300">
-                        <option value="">-- Pilih Perangkat Sensor --</option>
-                        @foreach($devices as $dev)
-                        <option value="{{ $dev->id }}">{{ $dev->name }} ({{ $dev->device_code }})</option>
-                        @endforeach
-                    </select>
-                    <div class="mt-1.5 flex justify-between items-center text-[10px]">
-                        <span class="text-gray-400">Pilih board pengirim data telemetri.</span>
-                        <a href="{{ route('admin.sensors.index') }}" class="text-brandGreen hover:underline font-bold">
-                            <i class="fa-solid fa-plus-circle"></i> Tambah Perangkat Baru
-                        </a>
-                    </div>
-                </div>
+
                 <div>
                     <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">Catatan Khusus</label>
                     <textarea id="notes" rows="2" placeholder="Kondisi fisik, bau, atau detail sampel..." class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white outline-none resize-none focus:ring-2 focus:ring-[#8DC63F]/30 focus:border-brandGreen transition duration-300"></textarea>
@@ -248,14 +234,6 @@
 <script>
 let port = null, reader = null, isConnected = false;
 let currentData = { temperature: null, humidity: null, gas_level: null, safety_status: null };
-
-document.addEventListener('DOMContentLoaded', () => {
-    // Auto-select the first valid sensor device
-    const sensorDeviceSelect = document.getElementById('sensorDevice');
-    if (sensorDeviceSelect && sensorDeviceSelect.options.length > 1) {
-        sensorDeviceSelect.selectedIndex = 1; // select the first actual sensor
-    }
-});
 
 function log(msg, type = 'info') {
     const el = document.getElementById('serialLog');
@@ -445,7 +423,7 @@ async function saveCurrentReading() {
     const payload = {
         sample_name: document.getElementById('sampleName').value,
         food_category_id: document.getElementById('foodCategory').value || null,
-        sensor_device_id: document.getElementById('sensorDevice').value || null,
+        sensor_device_id: null,
         notes: (currentData.safety_status ? `[Status Web Serial: ${currentData.safety_status.toUpperCase()}] ` : '') + document.getElementById('notes').value,
         ...currentData
     };
